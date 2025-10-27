@@ -1,42 +1,130 @@
 import * as THREE from 'three'
-import isMobileDevice from '../Utils/Device.js' // Asegúrate de que exista esta función
 
 export default class ThirdPersonCamera {
-    constructor(experience, target) {
+    /**
+     * @param {object} experience El objeto principal de la experiencia
+     * @param {THREE.Group} targetGroup El "group" del robot que debe seguir
+     */
+    constructor(experience, targetGroup) {
         this.experience = experience
-        this.camera = experience.camera.instance
-        this.target = target
+        this.sizes = this.experience.sizes
+        this.scene = this.experience.scene
+        this.canvas = this.experience.canvas
+        
+        // 1. Obtenemos la cámara principal (la que renderiza la escena)
+        this.cameraInstance = this.experience.camera.instance 
 
-        const isMobile = isMobileDevice()
+        // 2. Asignamos el objetivo a seguir
+        this.target = targetGroup 
 
-        // Distancia y altura adaptada
-        this.offset = isMobile
-            ? new THREE.Vector3(0, 3.5, -7)  // móvil: más alto y atrás
-            : new THREE.Vector3(0, 2.5, -5)
+        // --- Configuración de la cámara ---
+        // Qué tan lejos/arriba del robot debe estar
+        this.idealOffset = new THREE.Vector3(0, 4, -8) // (x: 0, y: 4, z: -8) -> Detrás y arriba
 
-        // Fijar altura para evitar sacudidas
-        this.fixedY = isMobile ? 3.5 : 2.5
+        // A qué parte del robot mirar (un poco arriba de sus pies)
+        this.idealLookAt = new THREE.Vector3(0, 1, 0)
+        
+        // --- Estado de la cámara (para suavizado) ---
+        this.currentPosition = new THREE.Vector3()
+        this.currentLookAt = new THREE.Vector3()
+        this.rotationQuaternion = new THREE.Quaternion()
+        this.lerpFactor = 0.05 // Factor de suavizado (más bajo = más suave)
+
+        // --- Estado del ratón ---
+        this.isMouseDown = false
+        this.lastMouseX = 0
+        this.rotationSpeed = 1.0 // Velocidad de rotación con el mouse
+
+        this.setMouseListeners()
+
+        // Inicializar la posición de la cámara para que no salte al inicio
+        const initialPos = this.idealOffset.clone().add(this.target.position)
+        this.currentPosition.copy(initialPos)
+        this.cameraInstance.position.copy(initialPos)
+
+        const initialLookAt = this.idealLookAt.clone().add(this.target.position)
+        this.currentLookAt.copy(initialLookAt)
+        this.cameraInstance.lookAt(initialLookAt)
     }
 
-    update() {
-        if (!this.target) return
+    /**
+     * Configura los listeners del mouse en el canvas
+     */
+    setMouseListeners() {
+        this.onMouseDown = (e) => this.handleMouseDown(e)
+        this.onMouseUp = (e) => this.handleMouseUp(e)
+        this.onMouseMove = (e) => this.handleMouseMove(e)
 
-        const basePosition = this.target.position.clone()
+        this.canvas.addEventListener('mousedown', this.onMouseDown)
+        this.canvas.addEventListener('mouseup', this.onMouseUp)
+        this.canvas.addEventListener('mousemove', this.onMouseMove)
+        
+        // Prevenir el menú contextual al hacer clic derecho
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault())
+    }
+    
+    handleMouseDown(event) {
+        // Clic izquierdo (0) o derecho (2)
+        if (event.button === 0 || event.button === 2) { 
+            this.isMouseDown = true
+            this.lastMouseX = event.clientX
+        }
+    }
 
-        // Dirección del robot
-        const direction = new THREE.Vector3(0, 0, 1).applyEuler(this.target.rotation).normalize()
+    handleMouseUp() {
+        this.isMouseDown = false
+    }
 
-        // Fijar cámara a una altura constante (no sigue saltos ni choques verticales)
-        const cameraPosition = new THREE.Vector3(
-            basePosition.x + direction.x * this.offset.z,
-            this.fixedY,
-            basePosition.z + direction.z * this.offset.z
+    handleMouseMove(event) {
+        // Solo rotar si el mouse está presionado y tenemos un objetivo
+        if (!this.isMouseDown || !this.target) return 
+
+        const deltaX = event.clientX - this.lastMouseX
+        this.lastMouseX = event.clientX
+
+        // Calcular la rotación alrededor del eje Y (vertical)
+        const rotationY = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0), // Eje Y
+            -deltaX * this.rotationSpeed * 0.005 // Ángulo de rotación
         )
 
-        this.camera.position.lerp(cameraPosition, 0.15)
+        // Aplicar la nueva rotación a la rotación acumulada
+        this.rotationQuaternion.multiplyQuaternions(rotationY, this.rotationQuaternion)
+    }
 
-        // Siempre mirar al centro del robot (con altura fija)
-        const lookAt = basePosition.clone().add(new THREE.Vector3(0, 1.2, 0))
-        this.camera.lookAt(lookAt)
+    /**
+     * Esta es la función que se llama desde World.js en cada frame
+     * cuando la cámara en tercera persona está activa.
+     */
+    update() {
+        if (!this.target) return 
+
+        // --- ¡AQUÍ ESTÁ LA MODIFICACIÓN! ---
+        // 1. Combinamos la rotación del robot con la rotación del mouse
+        const finalRotation = new THREE.Quaternion()
+            .copy(this.target.quaternion)       // Empezamos con la rotación del robot
+            .multiply(this.rotationQuaternion); // Le aplicamos la rotación del mouse
+
+        // 2. Calcular la posición ideal de la cámara
+        const idealPosition = this.idealOffset.clone()
+        
+        // ANTES: idealPosition.applyQuaternion(this.rotationQuaternion)
+        idealPosition.applyQuaternion(finalRotation) // Aplicar la rotación COMBINADA
+        
+        idealPosition.add(this.target.position)      // Mover la cámara a la posición del robot
+
+        // 3. Calcular el punto ideal a donde mirar (esto no cambia)
+        const idealLookAt = this.idealLookAt.clone()
+        idealLookAt.add(this.target.position) // El punto de mira se mueve con el robot
+
+        // 4. Suavizar (Lerp) el movimiento de la cámara
+        this.currentPosition.lerp(idealPosition, this.lerpFactor)
+
+        // 5. Suavizar (Lerp) el punto de mira
+        this.currentLookAt.lerp(idealLookAt, this.lerpFactor)
+
+        // 6. Aplicar las posiciones a la CÁMARA PRINCIPAL de la experiencia
+        this.cameraInstance.position.copy(this.currentPosition)
+        this.cameraInstance.lookAt(this.currentLookAt)
     }
 }
