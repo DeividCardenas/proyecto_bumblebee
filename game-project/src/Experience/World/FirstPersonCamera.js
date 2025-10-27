@@ -5,7 +5,7 @@ export default class FirstPersonCamera {
         this.experience = experience
         this.scene = experience.scene
         this.camera = experience.camera.instance
-        this.target = targetObject // normalmente: robot.group
+        this.target = targetObject 
         this.offset = new THREE.Vector3(0, 1.5, 0) // altura de los ojos
     }
 
