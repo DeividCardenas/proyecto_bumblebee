@@ -53,11 +53,11 @@ export default class Robot {
         const shape = new CANNON.Sphere(0.4)
 
         this.body = new CANNON.Body({
-            mass: 2,
+            mass: 3,
             shape: shape,
             //position: new CANNON.Vec3(4, 1, 0), // Apenas sobre el piso real (que termina en y=0)
             position: new CANNON.Vec3(0, 1.2, 0),
-            linearDamping: 0.05,
+            linearDamping: 0.12,
             angularDamping: 0.9
         })
 
@@ -71,7 +71,11 @@ export default class Robot {
         //console.log(' Robot material:', this.body.material.name)
 
 
-        this.physics.world.addBody(this.body)
+    // Facilitar que el cuerpo entre en reposo y no se deslice
+    this.body.sleepSpeedLimit = 0.25 // velocidad bajo la cual puede dormir
+    this.body.sleepTimeLimit = 0.5   // tiempo requerido para dormir
+
+    this.physics.world.addBody(this.body)
         //console.log(' Posición inicial del robot:', this.body.position)
         // Activar cuerpo después de que el mundo haya dado al menos un paso de simulación
         setTimeout(() => {
@@ -257,8 +261,31 @@ export default class Robot {
             this.body.quaternion.setFromEuler(0, this.group.rotation.y, 0)
         }
 
+        // Eliminación del deslizamiento lateral (avance en diagonal) en piso
+        // Proyecta la velocidad horizontal al eje de "forward" del robot
+        // para los niveles con movimiento tipo tanque (no hay strafe).
+        try {
+            const onGround = this.body.position.y < 0.55 && Math.abs(this.body.velocity.y) < 0.6
+            const level = this.experience?.levelManager?.currentLevel ?? 1
+            if (onGround && level <= 2) {
+                const forwardDir = new THREE.Vector3(0, 0, 1).applyQuaternion(this.group.quaternion).normalize()
+                const rightDir = new THREE.Vector3(1, 0, 0).applyQuaternion(this.group.quaternion).normalize()
 
-        // Animaciones según movimiento
+                const vel = new THREE.Vector3(this.body.velocity.x, 0, this.body.velocity.z)
+                const forwardSpeed = vel.dot(forwardDir)
+                const lateralSpeed = vel.dot(rightDir)
+
+                // Si estamos moviéndonos o girando, eliminamos el componente lateral
+                if (keys.up || keys.down || keys.left || keys.right || Math.abs(lateralSpeed) > 0.02) {
+                    const corrected = forwardDir.multiplyScalar(forwardSpeed)
+                    this.body.velocity.x = corrected.x
+                    this.body.velocity.z = corrected.z
+                }
+            }
+        } catch { /* ignore */ }
+
+
+    // Animaciones según movimiento
         if (isMoving && this.animation?.actions?.walking) {
             if (this.animation.actions.current !== this.animation.actions.walking) {
                 this.animation.play('walking') // Usará la animación 'dash'
@@ -269,7 +296,34 @@ export default class Robot {
             }
         }
 
+        // Freno de deslizamiento cuando estamos en suelo y el jugador no se está moviendo
+        if (!isMoving) {
+            try {
+                const onGround = this.body.position.y < 0.55 && Math.abs(this.body.velocity.y) < 0.6
+                if (onGround) {
+                    const speed2D = Math.hypot(this.body.velocity.x, this.body.velocity.z)
+                    if (speed2D < 0.35) {
+                        this.body.velocity.x = 0
+                        this.body.velocity.z = 0
+                    } else {
+                        this.body.velocity.x *= 0.98
+                        this.body.velocity.z *= 0.98
+                    }
+                }
+            } catch {/* ignore */}
+        }
+
         // Sincronización física → visual
+        // Estabilización: si estamos muy cerca del piso y casi sin velocidad vertical,
+        // evita micro-rebotes fijando la altura al radio de la esfera (0.4)
+        try {
+            const targetCenterY = 0.4
+            if (this.body.position.y < targetCenterY + 0.05 && this.body.velocity.y <= 0.5) {
+                this.body.position.y = targetCenterY
+                this.body.velocity.y = 0
+            }
+        } catch {/* ignore */}
+
         this.group.position.copy(this.body.position)
 
     }

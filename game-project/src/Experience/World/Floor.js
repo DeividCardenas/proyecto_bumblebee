@@ -65,6 +65,7 @@ export default class Floor {
     this.body = new CANNON.Body({
       mass: 0, // Estático
       shape: shape,
+      material: this.physics.floorMaterial,
       position: new CANNON.Vec3(0, -this.size.height / 2, 0),
     });
 

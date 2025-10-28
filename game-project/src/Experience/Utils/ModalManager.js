@@ -1,4 +1,3 @@
-// src/Utils/ModalManager.js
 export default class ModalManager {
   constructor({ container = document.body } = {}) {
     this.container = container

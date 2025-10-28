@@ -53,13 +53,13 @@ export default class World {
         new THREE.MeshStandardMaterial({ color: 0xff0000 })
       );
       const enemiesCountEnv = parseInt(
-        import.meta.env.VITE_ENEMIES_COUNT || "1",
+        import.meta.env.VITE_ENEMIES_COUNT || "0",
         10
       );
       const enemiesCount =
         Number.isFinite(enemiesCountEnv) && enemiesCountEnv > 0
           ? enemiesCountEnv
-          : 1;
+          : 0;
       this.spawnEnemies(enemiesCount);
 
       this.thirdPersonCamera = new ThirdPersonCamera(
@@ -106,7 +106,7 @@ export default class World {
   }
 
   // Crear varios enemigos en posiciones alejadas del jugador para evitar atascos iniciales
-  spawnEnemies(count = 1) {
+  spawnEnemies(count = 0) {
     if (!this.robot?.body?.position) return;
     const playerPos = this.robot.body.position;
     const minRadius = 25;
@@ -241,11 +241,13 @@ export default class World {
         const filteredBlocks = allBlocks.filter((b) => b.level === level);
         data = {
           blocks: filteredBlocks,
-          spawnPoint: { x: -17, y: 1.5, z: -67 },
+          // Usaremos un spawn fijo en (0,0,0) para todos los niveles
+          spawnPoint: { x: 0, y: 0, z: 0 },
         };
       }
 
-      const spawnPoint = data.spawnPoint || { x: 5, y: 1.5, z: 5 };
+      // Ignorar cualquier spawn diferente y forzar el punto (0,0,0) para todos los niveles
+      const spawnPoint = { x: 0, y: 0, z: 0 };
 
       this.finalPrizeActivated = false;
 
@@ -446,7 +448,7 @@ export default class World {
 
   }
 
-  resetRobotPosition(spawn = { x: -17, y: 1.5, z: -67 }) {
+  resetRobotPosition(spawn = { x: 0, y: 0, z: 0 }) {
     if (!this.robot?.body || !this.robot?.group) return;
 
     this.robot.body.position.set(spawn.x, spawn.y, spawn.z);

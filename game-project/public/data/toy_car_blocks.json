@@ -1967,5 +1967,4654 @@
         "z": -0.200775146484375,
         "level": 2,
         "role": "default"
+    },
+    
+    {
+        "name": "doordouble_wall_sideb_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -9.000000136438757e-05,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3_lev3",
+        "x": -4.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_empty_lev3",
+        "x": 0.0,
+        "y": 0.0,
+        "z": -0.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.001_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.002_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.003_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.005_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.006_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.007_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.008_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.009_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.010_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.011_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.016_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.012_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.013_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.014_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.015_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.019_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.017_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.018_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.020_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.021_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.022_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.023_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.001_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "doordouble_wall_sideb.002_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": 9.000000136438757e-05,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "doordouble_wall_sideb.003_lev3",
+        "x": 9.000000136438757e-05,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.001_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.001_lev3",
+        "x": -17.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.002_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.002_lev3",
+        "x": -4.0,
+        "y": 0.0,
+        "z": 14.000000953674316,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.003_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.003_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.001_lev3",
+        "x": 14.5,
+        "y": 0.0,
+        "z": 1.5,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.002_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.003_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.004_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.004_lev3",
+        "x": 4.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.005_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.005_lev3",
+        "x": 4.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.006_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.007_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.006_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.007_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.001_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.002_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.003_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.004_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.005_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.001_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.002_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.006_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.007_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.008_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.009_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.010_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.011_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.012_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.013_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.014_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.015_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.016_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.003_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.001_lev3",
+        "x": 35.0,
+        "y": 0.0,
+        "z": -0.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.002_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.017_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.018_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.019_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.020_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.021_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.022_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.023_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.024_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.025_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.026_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.027_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.028_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.029_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.030_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.031_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.032_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.004_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.005_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.006_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.007_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.003_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.033_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.034_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.035_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.036_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.037_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.038_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.039_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.040_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.041_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.042_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.043_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.044_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.045_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.046_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.047_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.048_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.049_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.050_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.051_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.052_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.053_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.054_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.055_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.056_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.057_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.058_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.059_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.060_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.061_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.062_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.063_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.064_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.008_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.009_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.010_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.011_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.012_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.013_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.014_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.015_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.004_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.008_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "doordouble_wall_sideb.004_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -9.000000136438757e-05,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.004_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.005_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.006_lev3",
+        "x": -14.5,
+        "y": 0.0,
+        "z": 1.5643304586410522,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.007_lev3",
+        "x": -14.5,
+        "y": 0.0,
+        "z": -1.564329981803894,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.008_lev3",
+        "x": -14.5,
+        "y": 0.0,
+        "z": -1.564329981803894,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.008_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.008_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.010_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -20.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.010_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.012_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -20.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.012_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.009_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.010_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.013_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.014_lev3",
+        "x": -21.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.014_lev3",
+        "x": -25.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.015_lev3",
+        "x": -33.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.011_lev3",
+        "x": -29.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.015_lev3",
+        "x": -37.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.012_lev3",
+        "x": -41.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.009_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.009_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.009_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.010_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.011_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 20.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.011_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": 16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.016_lev3",
+        "x": -33.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.017_lev3",
+        "x": -21.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.013_lev3",
+        "x": -41.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.014_lev3",
+        "x": -29.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.015_lev3",
+        "x": -17.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.016_lev3",
+        "x": -37.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.017_lev3",
+        "x": -25.000003814697266,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.018_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 20.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.019_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -20.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.020_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_4.021_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.016_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.017_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.018_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.019_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.020_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_1.021_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.011_lev3",
+        "x": -15.0,
+        "y": 0.0,
+        "z": -22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.012_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": 22.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.018_lev3",
+        "x": 17.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.024_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "doordouble_wall_sideb.005_lev3",
+        "x": 0.07970809936523438,
+        "y": 0.0,
+        "z": -14.966318130493164,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.013_lev3",
+        "x": 14.5,
+        "y": 0.0,
+        "z": -1.5,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.014_lev3",
+        "x": -2.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.015_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.019_lev3",
+        "x": 21.0,
+        "y": 0.0,
+        "z": -2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.020_lev3",
+        "x": 17.0,
+        "y": 0.0,
+        "z": -2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.021_lev3",
+        "x": 25.0,
+        "y": 0.0,
+        "z": -2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.022_lev3",
+        "x": 25.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.023_lev3",
+        "x": 21.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.002_lev3",
+        "x": -43.0,
+        "y": 0.0,
+        "z": -9.000000136438757e-05,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.016_lev3",
+        "x": -1.5,
+        "y": 0.0,
+        "z": -14.5,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.017_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.003_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.004_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.005_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.006_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.007_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.008_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.009_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.018_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.019_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.014_lev3",
+        "x": 41.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.015_lev3",
+        "x": 37.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.016_lev3",
+        "x": 33.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.017_lev3",
+        "x": 29.0,
+        "y": 0.0,
+        "z": 18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.010_lev3",
+        "x": 41.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.011_lev3",
+        "x": 37.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.012_lev3",
+        "x": 33.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.013_lev3",
+        "x": 29.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.020_lev3",
+        "x": 27.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.021_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -18.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.018_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.019_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.020_lev3",
+        "x": -2.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.021_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -0.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.022_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": 16.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.023_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.024_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.025_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.026_lev3",
+        "x": -2.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "doordouble_wall_sideb.006_lev3",
+        "x": 15.0,
+        "y": 0.0,
+        "z": 9.000000136438757e-05,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.022_lev3",
+        "x": 15.0,
+        "y": 0.0,
+        "z": -2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.023_lev3",
+        "x": 15.0,
+        "y": 0.0,
+        "z": 2.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.024_lev3",
+        "x": 1.5,
+        "y": 0.0,
+        "z": -14.5,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.027_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.028_lev3",
+        "x": 43.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.029_lev3",
+        "x": 2.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_empty.030_lev3",
+        "x": 2.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.025_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.024_lev3",
+        "x": 12.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.025_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -33.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.026_lev3",
+        "x": 4.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.027_lev3",
+        "x": -4.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.028_lev3",
+        "x": -12.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.029_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.026_lev3",
+        "x": 2.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.027_lev3",
+        "x": 2.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.028_lev3",
+        "x": -2.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.029_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.030_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.031_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -25.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.032_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.030_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "column_3.031_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.033_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.034_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -25.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.035_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -33.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "window_wall_sideb.002_lev3",
+        "x": 0.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "window_wall_sideb.003_lev3",
+        "x": -4.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "window_wall_sideb.007_lev3",
+        "x": 4.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.036_lev3",
+        "x": 12.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.037_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": -23.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.038_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.039_lev3",
+        "x": -12.0,
+        "y": 0.0,
+        "z": -35.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.040_lev3",
+        "x": 12.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.041_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.042_lev3",
+        "x": 14.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.043_lev3",
+        "x": 12.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.044_lev3",
+        "x": -12.0,
+        "y": 0.0,
+        "z": -14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.045_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": 4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.046_lev3",
+        "x": -14.0,
+        "y": 0.0,
+        "z": -4.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_3.047_lev3",
+        "x": -12.0,
+        "y": 0.0,
+        "z": 14.000000953674316,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.006_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.025_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.026_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.027_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.028_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.029_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.030_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.031_lev3",
+        "x": 23.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.032_lev3",
+        "x": 26.5,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.033_lev3",
+        "x": 21.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.034_lev3",
+        "x": 19.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.035_lev3",
+        "x": 15.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.036_lev3",
+        "x": 17.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.037_lev3",
+        "x": 25.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.065_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.066_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.067_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.068_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.016_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.017_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.069_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.071_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.072_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.070_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.073_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.074_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.075_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.076_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.077_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.078_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.001_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.079_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.080_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.081_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.082_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.083_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.084_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.086_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.087_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.088_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.089_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.090_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.018_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.019_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.091_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.092_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.093_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.094_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.095_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.096_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.097_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.098_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.099_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.100_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.101_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.102_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.103_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.104_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.105_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.106_lev3",
+        "x": 42.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.002_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.107_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.003_lev3",
+        "x": 28.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.085_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.108_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.109_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.110_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.004_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.111_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.112_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.113_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.114_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.115_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.116_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.117_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.118_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.119_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.120_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.121_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.122_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.123_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.124_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.005_lev3",
+        "x": 40.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.125_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.126_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.127_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.128_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.129_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.130_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.131_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.132_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.133_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.134_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.135_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.136_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.137_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.138_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.139_lev3",
+        "x": 30.016603469848633,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.140_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.141_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.142_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.006_lev3",
+        "x": 30.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.005_lev3",
+        "x": 35.0,
+        "y": 0.0,
+        "z": 10.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.007_lev3",
+        "x": 35.0,
+        "y": 0.0,
+        "z": -10.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.001_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.002_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.003_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.004_lev3",
+        "x": 32.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.005_lev3",
+        "x": 34.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.006_lev3",
+        "x": 38.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_empty.007_lev3",
+        "x": 36.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.038_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -22.5,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.039_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.040_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -19.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.041_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.043_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.143_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.144_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.145_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.146_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.020_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.147_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.148_lev3",
+        "x": -5.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.149_lev3",
+        "x": -9.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.150_lev3",
+        "x": -7.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.151_lev3",
+        "x": -3.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.152_lev3",
+        "x": -11.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.021_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.153_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.154_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.155_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.156_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.157_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.022_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.158_lev3",
+        "x": 11.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.159_lev3",
+        "x": -1.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.160_lev3",
+        "x": 7.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.161_lev3",
+        "x": 9.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.162_lev3",
+        "x": 5.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.023_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.163_lev3",
+        "x": 3.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.164_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -34.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.007_lev3",
+        "x": 1.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.008_lev3",
+        "x": -1.0,
+        "y": 0.0,
+        "z": -24.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.165_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -28.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.166_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -30.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.167_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -32.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.168_lev3",
+        "x": -13.0,
+        "y": 0.0,
+        "z": -26.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.169_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -26.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.170_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -32.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.171_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -30.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.172_lev3",
+        "x": 13.0,
+        "y": 0.0,
+        "z": -28.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.008_lev3",
+        "x": 9.000000318337698e-06,
+        "y": 0.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.009_lev3",
+        "x": -8.0,
+        "y": 0.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.044_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.045_lev3",
+        "x": -20.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.046_lev3",
+        "x": -14.5,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.047_lev3",
+        "x": -18.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_double.048_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.010_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.173_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.174_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.175_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.176_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.177_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 7.023321151733398,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.178_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 5.023321151733398,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.179_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 3.0233211517333984,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.180_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 9.023321151733398,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_innercorner.009_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.024_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.025_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.181_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.182_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.183_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.184_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.185_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.186_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.187_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.188_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.026_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_corner.027_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.189_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.190_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.191_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.192_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.193_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.194_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.195_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.196_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.197_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_side.198_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.001_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.001_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.002_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.003_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.004_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.005_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.006_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.007_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.008_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 19.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.009_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.010_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.011_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.012_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.013_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.002_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.003_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.014_lev3",
+        "x": -20.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.015_lev3",
+        "x": -18.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.016_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.017_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.018_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.019_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.020_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.021_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.022_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.023_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.024_lev3",
+        "x": -20.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.025_lev3",
+        "x": -18.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.026_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.027_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.028_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.029_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.030_lev3",
+        "x": -38.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.031_lev3",
+        "x": -40.0,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.032_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.033_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 19.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.034_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.035_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.036_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.037_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.038_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.039_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.004_lev3",
+        "x": -42.015811920166016,
+        "y": 0.0,
+        "z": 21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.005_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.040_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.041_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.042_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.043_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.044_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.045_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": 11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.046_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.047_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": 3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.048_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.049_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.050_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.051_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.052_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.053_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.054_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.055_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -1.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.056_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.057_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.058_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.059_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.060_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.061_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.062_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -19.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.063_lev3",
+        "x": -42.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.064_lev3",
+        "x": -40.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.065_lev3",
+        "x": -38.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.066_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.067_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.068_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.069_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.070_lev3",
+        "x": -18.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.071_lev3",
+        "x": -20.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.072_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.073_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.074_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.075_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.076_lev3",
+        "x": -34.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.077_lev3",
+        "x": -32.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.078_lev3",
+        "x": -28.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.079_lev3",
+        "x": -30.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.080_lev3",
+        "x": -18.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.081_lev3",
+        "x": -20.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.082_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.083_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.084_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.085_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.086_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.087_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -19.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.088_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -15.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.089_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.090_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -9.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.091_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -11.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.092_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -7.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.093_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -5.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.094_lev3",
+        "x": -26.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_sides_pipes.095_lev3",
+        "x": -24.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.006_lev3",
+        "x": -36.0,
+        "y": 0.0,
+        "z": -12.971024513244629,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.007_lev3",
+        "x": -42.015811920166016,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.008_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.009_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -21.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.010_lev3",
+        "x": -22.0,
+        "y": 0.0,
+        "z": -13.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "rooftile_innercorner_pipes.011_lev3",
+        "x": -16.0,
+        "y": 0.0,
+        "z": -3.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.011_lev3",
+        "x": -29.0,
+        "y": 0.0,
+        "z": -9.000000318337698e-06,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.012_lev3",
+        "x": -38.982582092285156,
+        "y": 0.0,
+        "z": -9.000000318337698e-06,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.013_lev3",
+        "x": -29.0,
+        "y": 0.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.014_lev3",
+        "x": -19.0,
+        "y": 0.0,
+        "z": 12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.015_lev3",
+        "x": -19.0,
+        "y": 0.0,
+        "z": -12.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.016_lev3",
+        "x": -29.0,
+        "y": 0.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "wall_2_lev3",
+        "x": 0.0,
+        "y": 0.0,
+        "z": 14.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0_lev3",
+        "x": -8.0,
+        "y": 1.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.001_lev3",
+        "x": 8.0,
+        "y": 1.0,
+        "z": 8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.002_lev3",
+        "x": 8.0,
+        "y": 1.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.003_lev3",
+        "x": -8.0,
+        "y": 1.0,
+        "z": -8.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.004_lev3",
+        "x": -29.0,
+        "y": 1.0,
+        "z": 17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.005_lev3",
+        "x": -29.0,
+        "y": 1.0,
+        "z": -17.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.006_lev3",
+        "x": -8.0,
+        "y": 1.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "floortile_basic.017_lev3",
+        "x": 8.0,
+        "y": 0.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.007_lev3",
+        "x": 8.0,
+        "y": 1.0,
+        "z": -29.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.008_lev3",
+        "x": 35.0,
+        "y": 1.0,
+        "z": -10.0,
+        "level": 3,
+        "role": "default"
+    },
+    {
+        "name": "circle_material_0.009_lev3",
+        "x": 35.0,
+        "y": 1.0,
+        "z": 10.0,
+        "level": 3,
+        "role": "default"
     }
 ]

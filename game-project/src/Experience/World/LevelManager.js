@@ -65,8 +65,8 @@ export default class LevelManager {
       this.experience.world.loadLevel(this.currentLevel); // Espera breve para que el nivel se cargue y luego reubicar al robot
 
       setTimeout(() => {
-        // Asegúrate que esta posición es válida para el nivel 2
-        this.experience.world.resetRobotPosition({ x: -17, y: 1.5, z: -67 });
+        // Reubicar de forma segura al punto de spawn fijo usado en todos los niveles
+        this.experience.world.resetRobotPosition({ x: 0, y: 0, z: 0 });
       }, 1000);
     } else {
       console.log("All levels completed! Game Over."); // Aquí puedes manejar la lógica de fin de juego (ej. mostrar pantalla de victoria)
@@ -82,8 +82,8 @@ export default class LevelManager {
     this.experience.world.loadLevel(this.currentLevel); // (Opcional) resetear también la posición del robot aquí
 
     setTimeout(() => {
-      // Posición inicial Nivel 1
-      this.experience.world.resetRobotPosition({ x: -17, y: 1.5, z: -67 });
+      // Posición inicial fija para todos los niveles (centro del mapa)
+      this.experience.world.resetRobotPosition({ x: 0, y: 0, z: 0 });
     }, 1000);
   }
 

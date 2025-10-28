@@ -244,8 +244,26 @@ export default class ToyCarLoader {
       // --- Físicas ---
       let shape;
       let position = new THREE.Vector3();
+      const nameLower = (block.name || '').toLowerCase();
+      // Considerar como PISO por nombre (niveles 1-2 usan una plataforma grande)
+      const floorNameHints = [
+        'floortile', 'rooftile', 'floor', 'ground', 'platform', 'plataforma',
+        'base', 'pavement', 'road', 'street', 'walk', 'walkway', 'plane',
+        'groundplane', 'suelo', 'piso'
+      ];
+      let isFloorTile = floorNameHints.some(h => nameLower.includes(h));
 
-      if (precisePhysicsModels.includes(block.name)) {
+      // Heurística adicional: si el modelo es delgado en Y en relación a XZ, tratar como piso
+      const bboxProbe = new THREE.Box3().setFromObject(model);
+      const probeSize = new THREE.Vector3();
+      bboxProbe.getSize(probeSize);
+      const minXZ = Math.min(probeSize.x, probeSize.z);
+      const thinThreshold = Math.max(0.6, minXZ * 0.12);
+      const isThinY = probeSize.y <= thinThreshold;
+      if (!isFloorTile && isThinY) isFloorTile = true;
+
+      // Fuerza colision simple (caja) para pisos, aunque estén listados como 'precise'
+      if (precisePhysicsModels.includes(block.name) && !isFloorTile) {
         shape = createTrimeshShapeFromModel(model);
         if (!shape) {
           console.warn(`No se pudo crear Trimesh para ${block.name}`);
@@ -253,14 +271,15 @@ export default class ToyCarLoader {
         }
         position.set(0, 0, 0); // Trimesh usa la posición del modelo
       } else {
-        // Usar BoxShape por defecto para mejor rendimiento
-        shape = createBoxShapeFromModel(model, 0.9); // 0.9 para un 'padding'
+        // Usar BoxShape por defecto (para piso casi exacta; para otros con padding)
+        const scaleFactor = isFloorTile ? 0.98 : 0.9;
+        shape = createBoxShapeFromModel(model, scaleFactor);
         const bbox = new THREE.Box3().setFromObject(model);
         const center = new THREE.Vector3();
         const size = new THREE.Vector3();
         bbox.getCenter(center);
         bbox.getSize(size);
-        // Ajustar el centro del 'body' físico para que coincida con la base del modelo
+        // Apoyar la caja en la base del modelo (evita dejar huecos que generen caídas)
         center.y -= size.y / 2;
         position.copy(center);
       }
@@ -269,7 +288,8 @@ export default class ToyCarLoader {
         mass: 0, // Estático
         shape: shape,
         position: new CANNON.Vec3(position.x, position.y, position.z),
-        material: this.physics.obstacleMaterial,
+        // Si es piso, usa material de piso para tener más agarre y estabilidad
+        material: isFloorTile ? this.physics.floorMaterial : this.physics.obstacleMaterial,
       });
 
       body.userData = { levelObject: true };
