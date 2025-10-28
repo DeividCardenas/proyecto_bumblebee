@@ -38,7 +38,7 @@ Opcionalmente, en `game-project/.env` (o `.env.local`) para apuntar al backend:
 
 ```env
 VITE_API_URL=http://localhost:3001
-VITE_ENEMIES_COUNT=1
+VITE_ENEMIES_COUNT=0
 ```
 
 ---
