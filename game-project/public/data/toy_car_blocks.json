@@ -1221,7 +1221,7 @@
         "y": 1.3601974248886108,
         "z": 1.5923938751220703,
         "level": 1,
-        "role": "final_prize"
+        "role": "default"
     },
     
     {
@@ -1870,7 +1870,7 @@
         "y": 1.0861690044403076,
         "z": 6.395094871520996,
         "level": 2,
-        "role": "final_prize"
+        "role": "default"
     },
     {
         "name": "circle_material_0.002_lev2",

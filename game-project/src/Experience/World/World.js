@@ -11,8 +11,9 @@ import MobileControls from "../../controls/MobileControls.js";
 import LevelManager from "./LevelManager.js";
 import BlockPrefab from "./BlockPrefab.js";
 import Enemy from "./Enemy.js";
-import GameLogic from "../Utils/GameLogic.js"; // NUEVO
-import FXManager from "../Utils/FXManager.js"; // NUEVO
+import GameLogic from "../Utils/GameLogic.js";
+import FXManager from "../Utils/FXManager.js";
+import Prize from "./Prize.js";
 
 export default class World {
   constructor(experience) {
@@ -25,7 +26,7 @@ export default class World {
     this.levelManager = new LevelManager(this.experience);
 
     // --- Manejador de Efectos ---
-    this.fxManager = new FXManager(this.scene, this.experience); // NUEVO
+    this.fxManager = new FXManager(this.scene, this.experience);
 
     this.finalPrizeActivated = false;
     this.gameStarted = false;
@@ -42,7 +43,24 @@ export default class World {
       this.environment = new Environment(this.experience);
 
       this.loader = new ToyCarLoader(this.experience);
+
+      // 1. Carga el Nivel 1 (o el nivel por defecto)
       await this.loader.loadFromAPI();
+
+      // --- ¡ESTA ES LA CORRECCIÓN DEL BUG! ---
+      // 2. Contamos las monedas del Nivel 1 y configuramos el LevelManager
+      // (Esta lógica faltaba aquí y solo estaba en loadLevel)
+      const defaultPrizeCount = this.loader.prizes.filter(
+        (p) => p.role === "default"
+      ).length;
+
+      if (defaultPrizeCount === 0) {
+        console.warn(
+          "⚠️ ¡Advertencia (Nivel 1)! No se encontraron premios con 'role: \"default\"'."
+        );
+      }
+      this.levelManager.setLevelPrizeCount(defaultPrizeCount);
+      // --- FIN DE LA CORRECCIÓN DEL BUG ---
 
       this.fox = new Fox(this.experience);
       this.robot = new Robot(this.experience);
@@ -126,12 +144,9 @@ export default class World {
       const y = 1.5;
 
       const enemy = new Enemy({
-        scene: this.scene,
-        physicsWorld: this.experience.physics.world,
-        playerRef: this.robot,
-        model: this.enemyTemplate,
-        position: new THREE.Vector3(x, y, z),
         experience: this.experience,
+        playerRef: this.robot,
+        position: new THREE.Vector3(x, y, z),
       });
 
       // Pequeño delay para que no ataquen todos a la vez
@@ -222,6 +237,8 @@ export default class World {
           return `${base.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
         };
 
+        console.log("PRUEBA DE DEPURACIÓN: ¿Tienen 'role' los premios?", this.loader.prizes);
+
         const localUrl = publicPath("data/toy_car_blocks.json");
         const localRes = await fetch(localUrl);
         if (!localRes.ok) {
@@ -274,7 +291,10 @@ export default class World {
           );
         }
         const preciseModels = await preciseRes.json();
-        this.loader._processBlocks(data.blocks, preciseModels);
+
+        // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
+        // Aseguramos que las monedas estén cargadas antes de seguir.
+        await this.loader._processBlocks(data.blocks, preciseModels);
       } else {
         await this.loader.loadFromURL(apiUrl);
       }
@@ -289,6 +309,14 @@ export default class World {
       const defaultPrizeCount = this.loader.prizes.filter(
         (p) => p.role === "default"
       ).length;
+
+      if (defaultPrizeCount === 0) {
+        console.warn(
+          "⚠️ ¡Advertencia! No se encontraron premios con 'role: \"default\"'.",
+          "El contador de premios del nivel es 0.",
+          "Asegúrate de que tus monedas (circle_material) tengan 'role: \"default\"' en tus datos."
+        );
+      }
       this.levelManager.setLevelPrizeCount(defaultPrizeCount);
 
       if (this.gameLogic) {
@@ -302,42 +330,72 @@ export default class World {
     }
   }
 
-  /**
-   * Activa la visualización del premio final.
-   * (Ahora mucho más limpio)
-   */
-  showFinalPrize() {
-    if (this.finalPrizeActivated) return; // Prevenir múltiples activaciones
+showFinalPrize() {
+    if (this.finalPrizeActivated) return;
+    console.log("🔥 Activando showFinalPrize() para crear el Portal...");
 
-    const finalCoin = this.loader.prizes.find((p) => p.role === "finalPrize");
-
-    if (finalCoin && !finalCoin.collected && finalCoin.pivot) {
-      finalCoin.pivot.visible = true;
-      if (finalCoin.model) finalCoin.model.visible = true;
-      this.finalPrizeActivated = true;
-
-      // Determinar la posición de origen de las partículas (VR vs PC)
-      const sourcePos = this.experience.renderer.instance.xr.isPresenting
-        ? this.experience.vrDolly?.position ??
-          this.experience.camera.instance.position
-        : this.robot.body.position;
-
-      // NUEVO: Delegar la creación de efectos al FXManager
-      this.fxManager.showFinalPrizeBeacon(
-        finalCoin.pivot.position,
-        sourcePos
-      );
-
-      if (window.userInteracted) {
-        this.portalSound.play();
-      }
-
-      console.log("🪙 Coin final activado correctamente.");
-    } else {
-      console.warn(
-        "showFinalPrize() fue llamado pero no se encontró el 'finalPrize' o ya fue recogido."
-      );
+    // 1. Obtener el recurso GLTF del portal
+    const portalResource = this.resources.items.Portal;
+    if (!portalResource || !portalResource.scene) {
+      console.error("❌ No se encontró el recurso 'Portal'. Revisa tu 'sources.js'.");
+      return;
     }
+    
+    // 2. Instanciar el modelo y la posición
+    const portalModel = portalResource.scene.clone();
+    
+    // --- ¡CAMBIO DE POSICIÓN! ---
+    // Lo subimos 1 unidad en Y para que flote sobre el suelo (que está en Y=0)
+    const portalPosition = new THREE.Vector3(0, 1, 0); 
+    // --- FIN DEL CAMBIO ---
+
+    // 3. Forzamos visibilidad
+    portalModel.traverse((child) => {
+      child.visible = true;
+    });
+    
+    // 4. Creamos una instancia real de la clase Prize
+    const finalPortalPrize = new Prize({
+      model: portalModel,
+      position: portalPosition, // <-- Pasa la nueva posición Y=1
+      scene: this.scene,
+      role: "final_prize",
+      
+      // --- ¡CAMBIO IMPORTANTE! ---
+      // No le pasamos las animaciones para evitar el cuelgue.
+      // animations: portalResource.animations // <-- LÍNEA DESACTIVADA
+    });
+
+    // 5. Hacemos visible el premio
+    finalPortalPrize.pivot.visible = true;
+
+    // 6. Añadir el nuevo premio al array que GameLogic revisa
+    if (!this.loader || !this.loader.prizes) {
+       console.error("❌ this.loader.prizes no está listo.");
+       return;
+    }
+    
+    this.loader.prizes = this.loader.prizes.filter(p => p.role !== 'final_prize');
+    this.loader.prizes.push(finalPortalPrize);
+    
+    this.finalPrizeActivated = true;
+
+    // 7. Activar el FXManager (Faro de luz)
+    const sourcePos = this.experience.renderer.instance.xr.isPresenting
+      ? this.experience.vrDolly?.position ?? this.experience.camera.instance.position
+      : this.robot.body.position;
+
+    this.fxManager.showFinalPrizeBeacon(
+      finalPortalPrize.pivot.position, 
+      sourcePos
+    );
+
+    // 8. Sonido del portal
+    if (window.userInteracted && this.portalSound) {
+      this.portalSound.play();
+    }
+
+    console.log("✅ Portal (final_prize) creado en (0, 1, 0) y listo para usar.");
   }
 
   clearCurrentScene() {
@@ -351,7 +409,6 @@ export default class World {
       return;
     }
 
-    // ... (Toda la lógica de limpieza de escena y físicos se mantiene) ...
     let visualObjectsRemoved = 0;
     let physicsBodiesRemoved = 0;
     const childrenToRemove = [];
@@ -416,7 +473,6 @@ export default class World {
         `🎯 Cuerpos físicos actuales en Physics World: ${physicsBodiesRemaining}`
       );
     }
-    // ... (Fin de la lógica de limpieza de escena) ...
 
     if (this.loader && this.loader.prizes.length > 0) {
       this.loader.prizes.forEach((prize) => {
@@ -446,6 +502,10 @@ export default class World {
     // NUEVO: Limpiar los efectos visuales
     this.fxManager.clearFinalPrizeBeacon();
 
+    // --- ¡NUEVO! ---
+    // Detenemos y limpiamos el mixer del portal
+
+    // ---
   }
 
   resetRobotPosition(spawn = { x: 0, y: 0, z: 0 }) {
@@ -460,20 +520,4 @@ export default class World {
     this.robot.group.rotation.set(0, 0, 0);
   }
 
-  async _processLocalBlocks(blocks) {
-    const preciseRes = await fetch("/config/precisePhysicsModels.json");
-    const preciseModels = await preciseRes.json();
-    this.loader._processBlocks(blocks, preciseModels);
-
-    this.loader.prizes.forEach((p) => {
-      if (p.model) p.model.visible = p.role !== "finalPrize";
-      p.collected = false;
-    });
-
-    // --- Integración LevelManager ---
-    const defaultPrizeCount = this.loader.prizes.filter(
-      (p) => p.role === "default"
-    ).length;
-    this.levelManager.setLevelPrizeCount(defaultPrizeCount);
-  }
 }

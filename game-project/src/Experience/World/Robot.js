@@ -2,6 +2,28 @@ import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import Sound from './Sound.js'
 
+// --- CONFIGURACIÓN CENTRALIZADA ---
+const CONFIG = {
+    modelScale: 0.7,
+    mass: 2,
+    sphereRadius: 0.4,
+    linearDamping: 0.05,
+    angularDamping: 0.9,
+    moveForce: 260,
+    turnSpeed: 3.1,
+    maxSpeed: 18,
+    jumpForce: 3,
+    jumpForwardImpulse: 0.5,
+    animationFadeDuration: 0.2,
+    soundWalkVolume: 0.5,
+    soundJumpVolume: 0.8,
+    requiredAnimations: {
+        idle: 'idle01',
+        walking: 'dash',
+        death: 'emo_sad'
+    }
+};
+
 export default class Robot {
     constructor(experience) {
         this.experience = experience
@@ -11,18 +33,22 @@ export default class Robot {
         this.physics = this.experience.physics
         this.keyboard = this.experience.keyboard
         this.debug = this.experience.debug
+        
         this.points = 0
         this.isInitialized = false
-    this.isDead = false
+        this.isDead = false
 
-        // Verificar si el modelo del robot está cargado
+        // Vectores reutilizables para optimización
+        this.moveDirection = new THREE.Vector3();
+        this.cannonMoveForce = new CANNON.Vec3();
+        this.cannonJumpImpulse = new CANNON.Vec3();
+
         if (this.resources.items.robotModel) {
             try {
                 this.setModel()
                 this.setSounds()
                 this.setPhysics()
                 this.setAnimation()
-                // transformation feature removed
                 this.isInitialized = true
             } catch (error) {
                 console.error('❌ Error al inicializar el robot:', error)
@@ -34,8 +60,8 @@ export default class Robot {
 
     setModel() {
         this.model = this.resources.items.robotModel.scene
-        this.model.scale.set(0.7, 0.7, 0.7)
-        this.model.position.set(0, 0, 0) // Centrar respecto al cuerpo físico
+        this.model.scale.set(CONFIG.modelScale, CONFIG.modelScale, CONFIG.modelScale)
+        this.model.position.set(0, 0, 0)
 
         this.group = new THREE.Group()
         this.group.add(this.model)
@@ -49,325 +75,236 @@ export default class Robot {
     }
 
     setPhysics() {
-        //const shape = new CANNON.Box(new CANNON.Vec3(0.3, 0.5, 0.3))
-        const shape = new CANNON.Sphere(0.4)
-
+        const shape = new CANNON.Sphere(CONFIG.sphereRadius)
         this.body = new CANNON.Body({
-            mass: 2,
+            mass: CONFIG.mass,
             shape: shape,
-            //position: new CANNON.Vec3(4, 1, 0), // Apenas sobre el piso real (que termina en y=0)
             position: new CANNON.Vec3(0, 0, 0),
-            linearDamping: 0.05,
-            angularDamping: 0.9
+            linearDamping: CONFIG.linearDamping,
+            angularDamping: CONFIG.angularDamping,
+            material: this.physics.robotMaterial
         })
 
-        this.body.angularFactor.set(0, 0, 0)
+        this.body.angularFactor.set(0, 0, 0) // No rotar por física, solo por control
+        this.physics.world.addBody(this.body)
 
         // Estabilización inicial
-        this.body.velocity.setZero()
-        this.body.angularVelocity.setZero()
-        this.body.sleep()
-        this.body.material = this.physics.robotMaterial
-        //console.log(' Robot material:', this.body.material.name)
-
-
-        this.physics.world.addBody(this.body)
-        //console.log(' Posición inicial del robot:', this.body.position)
-        // Activar cuerpo después de que el mundo haya dado al menos un paso de simulación
-        setTimeout(() => {
-            this.body.wakeUp()
-        }, 40) // 100 ms ≈ 6 pasos de simulación si step = 1/60
+        setTimeout(() => this.body.wakeUp(), 50)
     }
-
 
     setSounds() {
-        this.walkSound = new Sound('/sounds/robot/walking.mp3', { loop: true, volume: 0.5 })
-        this.jumpSound = new Sound('/sounds/robot/jump.mp3', { volume: 0.8 })
+        this.walkSound = new Sound('/sounds/robot/walking.mp3', { loop: true, volume: CONFIG.soundWalkVolume })
+        this.jumpSound = new Sound('/sounds/robot/jump.mp3', { volume: CONFIG.soundJumpVolume })
     }
-    // Transformation feature removed. Robot will use idle/dash only.
 
     setAnimation() {
-    this.animation = {}
-    this.animation.mixer = new THREE.AnimationMixer(this.model)
-    this.animation.actions = {}
+        this.animation = {}
+        this.animation.mixer = new THREE.AnimationMixer(this.model)
+        this.animation.actions = {}
 
-        // Verificar que el modelo tenga animaciones
-        if (!this.resources.items.robotModel.animations || this.resources.items.robotModel.animations.length === 0) {
+        const animations = this.resources.items.robotModel.animations;
+        if (!animations || animations.length === 0) {
             console.error('❌ El modelo del robot no tiene animaciones')
             return
         }
 
-        // Buscar las animaciones por nombre
-        const animations = this.resources.items.robotModel.animations;
-        const requiredAnimations = {
-            idle: 'idle01',
-            walking: 'dash',
-            death: 'emo_sad'
-        }
-
-        // reverseTransform removed
-
-        // Crear acciones buscando las animaciones por nombre
-        for (const [actionKey, animationName] of Object.entries(requiredAnimations)) {
-            const animation = animations.find(anim => anim.name === animationName);
-            if (animation) {
-                this.animation.actions[actionKey] = this.animation.mixer.clipAction(animation);
+        for (const [actionKey, animName] of Object.entries(CONFIG.requiredAnimations)) {
+            const clip = animations.find(anim => anim.name === animName);
+            if (clip) {
+                this.animation.actions[actionKey] = this.animation.mixer.clipAction(clip);
             } else {
-                console.warn(`⚠️ Animación "${animationName}" no encontrada`);
+                console.warn(`⚠️ Animación "${animName}" no encontrada para la acción "${actionKey}"`);
             }
         }
 
-        // Verificar que tenemos al menos la animación idle
-        if (this.animation.actions.idle) {
-            // Configurar la animación idle para que se repita
-            this.animation.actions.idle.setLoop(THREE.LoopRepeat)
-            this.animation.actions.idle.clampWhenFinished = false
-
-            // Iniciar con la animación idle
-            this.animation.actions.current = this.animation.actions.idle
-            this.animation.actions.current.play()
-
-        } else {
+        if (!this.animation.actions.idle) {
             console.error('❌ No se encontró la animación idle necesaria')
+            return;
         }
 
-        // Método para cambiar entre animaciones de forma segura
+        this.animation.actions.current = this.animation.actions.idle;
+        this.animation.actions.current.play();
+
         this.animation.play = (name) => {
-            if (!this.animation.actions[name]) {
-                console.warn(`⚠️ Intento de reproducir animación "${name}" que no existe`)
-                return
+            const newAction = this.animation.actions[name];
+            const oldAction = this.animation.actions.current;
+
+            if (!newAction || newAction === oldAction) return;
+
+            newAction.reset();
+            if (name === 'jump' || name === 'death') {
+                newAction.setLoop(THREE.LoopOnce, 1);
+                newAction.clampWhenFinished = true;
+            } else {
+                newAction.setLoop(THREE.LoopRepeat);
+                newAction.clampWhenFinished = false;
             }
 
-            const newAction = this.animation.actions[name]
-            const oldAction = this.animation.actions.current
+            oldAction.fadeOut(CONFIG.animationFadeDuration);
+            newAction.fadeIn(CONFIG.animationFadeDuration).play();
+            this.animation.actions.current = newAction;
 
-            if (oldAction && oldAction !== newAction) {
-                newAction.reset()
-
-                // Jump uses a single-run loop, others repeat
-                if (name === 'jump' || name === 'death') {
-                    newAction.setLoop(THREE.LoopOnce)
-                    newAction.clampWhenFinished = true
-                } else {
-                    newAction.setLoop(THREE.LoopRepeat)
-                    newAction.clampWhenFinished = false
-                }
-
-                const duration = 0.2
-                oldAction.fadeOut(duration)
-                newAction.fadeIn(duration)
-                newAction.play()
-            }
-
-            this.animation.actions.current = newAction
-
-            // Manejo de sonidos
-            if (name === 'walking' && this.walkSound) {
-                this.walkSound.play()
-            } else if (this.walkSound) {
-                this.walkSound.stop()
-            }
-
-            if (name === 'jump' && this.jumpSound) {
-                this.jumpSound.play()
-            }
+            // Sonidos
+            name === 'walking' ? this.walkSound?.play() : this.walkSound?.stop();
+            if (name === 'jump') this.jumpSound?.play();
         }
     }
 
-    update() {
-        if (!this.isInitialized) return
-        if (this.isDead) return
-        if (this.animation?.actions?.current === this.animation?.actions?.death) return
-        const delta = this.time.delta * 0.001
+    _handleKeyboardInput(deltaTime) {
+        const keys = this.keyboard.getState();
+        let isMoving = false;
 
-        // Actualizar el mixer de animaciones si existe
-        if (this.animation?.mixer) {
-            this.animation.mixer.update(delta)
-        }
-
-        const keys = this.keyboard.getState()
-    // Velocidades fijas (ajustadas para movimiento más lento)
-    const moveForce = 180 // fuerza de movimiento reducida
-    const turnSpeed = 1.5 // giro más suave
-        let isMoving = false
-
-    // Limitar velocidad si es demasiado alta
-    const maxSpeed = 8
-        this.body.velocity.x = Math.max(Math.min(this.body.velocity.x, maxSpeed), -maxSpeed)
-        this.body.velocity.z = Math.max(Math.min(this.body.velocity.z, maxSpeed), -maxSpeed)
-
+        // Obtener la dirección "hacia adelante" del robot
+        this.moveDirection.set(0, 0, 1).applyQuaternion(this.group.quaternion);
 
         // Salto
-        // Dirección hacia adelante, independientemente del salto o movimiento
-        const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(this.group.quaternion)
-
-        // Salto
-        if (keys.space && this.body.position.y <= 0.51) {
-            this.body.applyImpulse(new CANNON.Vec3(forward.x * 0.5, 3, forward.z * 0.5))
-            this.animation.play('jump')
-            return
-        }
-        //No permitir que el robot salga del escenario
-        if (this.body.position.y > 10) {
-            console.warn(' Robot fuera del escenario. Reubicando...')
-            this.body.position.set(0, 1.2, 0)
-            this.body.velocity.set(0, 0, 0)
+        if (keys.space && this.body.position.y <= CONFIG.sphereRadius * 1.1) {
+            this.cannonJumpImpulse.set(
+                this.moveDirection.x * CONFIG.jumpForwardImpulse,
+                CONFIG.jumpForce,
+                this.moveDirection.z * CONFIG.jumpForwardImpulse
+            );
+            this.body.applyImpulse(this.cannonJumpImpulse);
+            this.animation.play('jump');
+            return; // Evita otros movimientos durante el frame del salto
         }
 
-
-        // Movimiento hacia adelante
+        // Movimiento adelante/atrás
         if (keys.up) {
-            const forward = new THREE.Vector3(0, 0, 1)
-            forward.applyQuaternion(this.group.quaternion)
-            this.body.applyForce(
-                new CANNON.Vec3(forward.x * moveForce, 0, forward.z * moveForce),
-                this.body.position
-            )
-            isMoving = true
-        }
-
-        // Movimiento hacia atrás
-        if (keys.down) {
-            const backward = new THREE.Vector3(0, 0, -1)
-            backward.applyQuaternion(this.group.quaternion)
-            this.body.applyForce(
-                new CANNON.Vec3(backward.x * moveForce, 0, backward.z * moveForce),
-                this.body.position
-            )
-            isMoving = true
+            this.cannonMoveForce.set(
+                this.moveDirection.x * CONFIG.moveForce,
+                0,
+                this.moveDirection.z * CONFIG.moveForce
+            );
+            this.body.applyForce(this.cannonMoveForce);
+            isMoving = true;
+        } else if (keys.down) {
+            this.cannonMoveForce.set(
+                -this.moveDirection.x * CONFIG.moveForce,
+                0,
+                -this.moveDirection.z * CONFIG.moveForce
+            );
+            this.body.applyForce(this.cannonMoveForce);
+            isMoving = true;
         }
 
         // Rotación
         if (keys.left) {
-            this.group.rotation.y += turnSpeed * delta
-            this.body.quaternion.setFromEuler(0, this.group.rotation.y, 0)
+            this.group.rotation.y += CONFIG.turnSpeed * deltaTime;
+        } else if (keys.right) {
+            this.group.rotation.y -= CONFIG.turnSpeed * deltaTime;
         }
-        if (keys.right) {
-            this.group.rotation.y -= turnSpeed * delta
-            this.body.quaternion.setFromEuler(0, this.group.rotation.y, 0)
-        }
+        this.body.quaternion.setFromEuler(0, this.group.rotation.y, 0);
 
+        this._updateAnimation(isMoving);
+    }
 
-        // Animaciones según movimiento
-        if (isMoving && this.animation?.actions?.walking) {
+    _updateAnimation(isMoving) {
+        if (isMoving) {
             if (this.animation.actions.current !== this.animation.actions.walking) {
-                this.animation.play('walking') // Usará la animación 'dash'
-            }
-        } else if (this.animation?.actions?.idle) {
-            if (this.animation.actions.current !== this.animation.actions.idle) {
-                this.animation.play('idle') // Usará la animación 'vehicle_idle01'
-            }
-        }
-
-        // Sincronización física → visual
-        this.group.position.copy(this.body.position)
-
-    }
-
-    // Método para mover el robot desde el exterior VR
-    moveInDirection() {
-        if (!this.isInitialized || !window.userInteracted || !this.experience.renderer.instance.xr.isPresenting) {
-            return
-        }
-
-        // Si hay controles móviles activos
-        const mobile = window.experience?.mobileControls
-        if (mobile?.intensity > 0) {
-            const dir2D = mobile.directionVector
-            const dir3D = new THREE.Vector3(dir2D.x, 0, dir2D.y).normalize()
-
-            const adjustedSpeed = 250 * mobile.intensity // velocidad más fluida
-            const force = new CANNON.Vec3(dir3D.x * adjustedSpeed, 0, dir3D.z * adjustedSpeed)
-
-            if (this.body) {
-                this.body.applyForce(force, this.body.position)
-            }
-
-            if (this.animation?.actions?.walking && 
-                this.animation?.actions?.current !== this.animation.actions.walking) {
-                this.animation.play('walking')
-            }
-
-            // Rotar suavemente en dirección de avance si el grupo existe
-            if (this.group && this.body) {
-                const angle = Math.atan2(dir3D.x, dir3D.z)
-                this.group.rotation.y = angle
-                this.body.quaternion.setFromEuler(0, this.group.rotation.y, 0)
-            }
-        }
-    }
-    die() {
-        if (!this.isInitialized) return
-
-        // Prevent multiple calls
-        if (this.isDead) return
-        this.isDead = true
-
-        // Stop movement immediately
-        if (this.body) {
-            try {
-                this.body.velocity.set(0, 0, 0)
-                this.body.angularVelocity.set(0, 0, 0)
-            } catch {
-                /* ignore */
-            }
-        }
-
-        // Play death animation if available, otherwise cleanup immediately
-        const playDeathAndCleanup = () => {
-            // Detener sonidos si existen
-            if (this.walkSound) this.walkSound.stop()
-            if (this.jumpSound) this.jumpSound.stop()
-
-            // 💥 Eliminar cuerpo del mundo de forma segura
-            if (this.body && this.physics?.world?.bodies.includes(this.body)) {
-                try {
-                    this.physics.world.removeBody(this.body)
-                } catch {
-                    /* ignore removal error */
-                }
-                this.body = null // prevenir referencias rotas
-            }
-
-            // Ajustes visuales si el grupo existe
-            if (this.group) {
-                this.group.position.y -= 0.5
-                this.group.rotation.x = -Math.PI / 2
-            }
-
-            console.log(' Robot ha muerto')
-        }
-
-        if (this.animation?.actions?.death) {
-            // Crossfade to death and when finished do cleanup
-            try {
-                const old = this.animation.actions.current
-                if (old && old !== this.animation.actions.death) old.fadeOut(0.2)
-                const deathAction = this.animation.actions.death
-                deathAction.reset()
-                deathAction.setLoop(THREE.LoopOnce)
-                deathAction.clampWhenFinished = true
-                deathAction.fadeIn(0.2)
-                deathAction.play()
-                this.animation.actions.current = deathAction
-
-                const onFinished = () => {
-                    // remove listener and cleanup
-                    try { this.animation.mixer.removeEventListener('finished', onFinished) } catch { /* ignore */ }
-                    playDeathAndCleanup()
-                }
-                // mixer 'finished' fires with no args when any action finishes; guard by isDead
-                this.animation.mixer.addEventListener('finished', onFinished)
-            } catch {
-                // If animation play fails, cleanup immediately
-                playDeathAndCleanup()
+                this.animation.play('walking');
             }
         } else {
-            playDeathAndCleanup()
+            if (this.animation.actions.current !== this.animation.actions.idle) {
+                this.animation.play('idle');
+            }
         }
-
-
-        return
     }
 
+    _clampVelocity() {
+        const { x, z } = this.body.velocity;
+        if (Math.abs(x) > CONFIG.maxSpeed) {
+            this.body.velocity.x = Math.sign(x) * CONFIG.maxSpeed;
+        }
+        if (Math.abs(z) > CONFIG.maxSpeed) {
+            this.body.velocity.z = Math.sign(z) * CONFIG.maxSpeed;
+        }
+    }
+
+    _checkBoundaries() {
+        if (this.body.position.y > 10) {
+            console.warn('Robot fuera del escenario. Reubicando...');
+            this.body.position.set(0, 1.2, 0);
+            this.body.velocity.set(0, 0, 0);
+        }
+    }
+
+    update() {
+        if (!this.isInitialized || this.isDead) return;
+        if (this.animation.actions.current === this.animation.actions.death) return;
+
+        const deltaTime = this.time.delta * 0.001;
+
+        this.animation.mixer.update(deltaTime);
+        this._handleKeyboardInput(deltaTime);
+        this._clampVelocity();
+        this._checkBoundaries();
+
+        // Sincronización física → visual
+        this.group.position.copy(this.body.position);
+    }
+
+    moveInDirection() {
+        if (!this.isInitialized || !window.userInteracted || !this.experience.renderer.instance.xr.isPresenting) {
+            return;
+        }
+
+        const mobile = window.experience?.mobileControls;
+        if (mobile?.intensity > 0) {
+            const { x, y: z } = mobile.directionVector; // y de 2D es z en 3D
+            this.moveDirection.set(x, 0, z).normalize();
+
+            const adjustedSpeed = 250 * mobile.intensity;
+            this.cannonMoveForce.set(
+                this.moveDirection.x * adjustedSpeed,
+                0,
+                this.moveDirection.z * adjustedSpeed
+            );
+            this.body.applyForce(this.cannonMoveForce);
+
+            this._updateAnimation(true);
+
+            // Rotar suavemente
+            const angle = Math.atan2(x, z);
+            this.group.rotation.y = angle;
+            this.body.quaternion.setFromEuler(0, angle, 0);
+        }
+    }
+
+    die() {
+        if (!this.isInitialized || this.isDead) return;
+        this.isDead = true;
+
+        this.body?.velocity.set(0, 0, 0);
+        this.body?.angularVelocity.set(0, 0, 0);
+
+        const cleanup = () => {
+            this.walkSound?.stop();
+            this.jumpSound?.stop();
+
+            if (this.body && this.physics.world.bodies.includes(this.body)) {
+                this.physics.world.removeBody(this.body);
+                this.body = null;
+            }
+
+            if (this.group) {
+                this.group.position.y -= 0.5;
+                this.group.rotation.x = -Math.PI / 2;
+            }
+            console.log('Robot ha muerto');
+        };
+
+        if (this.animation.actions.death) {
+            this.animation.play('death');
+            const onFinished = (event) => {
+                if (event.action === this.animation.actions.death) {
+                    this.animation.mixer.removeEventListener('finished', onFinished);
+                    cleanup();
+                }
+            };
+            this.animation.mixer.addEventListener('finished', onFinished);
+        } else {
+            cleanup();
+        }
+    }
 }

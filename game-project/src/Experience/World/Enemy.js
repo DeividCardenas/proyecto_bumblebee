@@ -1,154 +1,293 @@
-import * as THREE from 'three'
-import * as CANNON from 'cannon-es'
-import FinalPrizeParticles from '../Utils/FinalPrizeParticles.js'
-import Sound from './Sound.js'
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import Sound from './Sound.js';
+import FinalPrizeParticles from '../Utils/FinalPrizeParticles.js';
+
+// --- CONFIGURACIÓN CENTRALIZADA ---
+const CONFIG = {
+  modelScale: 0.6,
+  mass: 5,
+  sphereRadius: 0.5,
+  linearDamping: 0.01,
+  baseSpeed: 1.0,
+  chaseSpeed: 3.5,
+  chaseDistance: 5.0,
+  stopDistance: 1.5,
+  soundMaxDistance: 12.0,
+  animationFadeDuration: 0.2,
+  requiredAnimations: {
+    idle: 'idle01',
+    walking: 'dash',
+  }
+};
+
+function toCannonVec3(v) {
+  // acepta THREE.Vector3, plain obj, o CANNON.Vec3
+  return new CANNON.Vec3(v.x ?? 0, v.y ?? 0, v.z ?? 0);
+}
+
+function toThreeVector(v) {
+  return new THREE.Vector3(v.x ?? 0, v.y ?? 0, v.z ?? 0);
+}
 
 export default class Enemy {
-    constructor({ scene, physicsWorld, playerRef, model, position, experience }) {
-        this.experience = experience
-        this.scene = scene
-        this.physicsWorld = physicsWorld
-        this.playerRef = playerRef
-        this.baseSpeed = 1.0  //Control velocidad del enemigo
-        this.speed = this.baseSpeed
-		this.delayActivation = 0 // activo de inmediato en modo escritorio
+  constructor({ experience, position, playerRef }) {
+    this.experience = experience;
+    this.scene = this.experience.scene;
+    this.resources = this.experience.resources;
+    this.physics = this.experience.physics;
+    this.time = this.experience.time;
+    this.playerRef = playerRef;
 
-
-
-        // Sonido de proximidad en loop
-        this.proximitySound = new Sound('/sounds/alert.ogg', {
-            loop: true,
-            volume: 0
-        })
-        this._soundCooldown = 0
-        this.proximitySound.play()
-
-        // Modelo visual
-        this.model = model.clone()
-        this.model.position.copy(position)
-        this.scene.add(this.model)
-
-        //  Material físico del enemigo
-        const enemyMaterial = new CANNON.Material('enemyMaterial')
-        enemyMaterial.friction = 0.0
-
-        // Cuerpo físico
-        const shape = new CANNON.Sphere(0.5)
-        this.body = new CANNON.Body({
-            mass: 5,
-            shape,
-            material: enemyMaterial,
-            position: new CANNON.Vec3(position.x, position.y, position.z),
-            linearDamping: 0.01
-        })
-
-		// Alinear altura con el robot en modo escritorio (evita que nunca colisionen por Y)
-		if (this.playerRef?.body) {
-			this.body.position.y = this.playerRef.body.position.y
-			this.model.position.y = this.body.position.y
-		}
-
-        this.body.sleepSpeedLimit = 0.0
-        this.body.wakeUp()
-        this.physicsWorld.addBody(this.body)
-
-        // Asocia el cuerpo al modelo
-        this.model.userData.physicsBody = this.body
-
-        // Colisión con robot
-        this._onCollide = (event) => {
-            if (event.body === this.playerRef.body) {
-                if (typeof this.playerRef.die === 'function') {
-                    this.playerRef.die()
-                }
-
-                if (this.proximitySound) {
-                    this.proximitySound.stop()
-                }
-
-                if (this.model.parent) {
-                    new FinalPrizeParticles({
-                        scene: this.scene,
-                        targetPosition: this.body.position,
-                        sourcePosition: this.body.position,
-                        experience: this.experience
-                    })
-
-                    this.destroy()
-                }
-            }
-        }
-
-        this.body.addEventListener('collide', this._onCollide)
+    // Guard: normalizar position a THREE.Vector3 internamente
+    if (!position) {
+      console.warn('Enemy created without initial position — using (0,0,0).');
+      this.initialPosition = new THREE.Vector3(0, 0, 0);
+    } else {
+      this.initialPosition = toThreeVector(position);
     }
 
-    update(delta) {
-        if (this.delayActivation > 0) {
-            this.delayActivation -= delta
-            return
-        }
+    this.targetPosition = new CANNON.Vec3();
+    this.moveDirection = new CANNON.Vec3();
+    this.isDestroyed = false;
 
-		if (!this.body || !this.playerRef?.body) return
+    try {
+      this.setSounds();
+      this.setModel();
+      this.setPhysics();
+      this.setAnimation();
+    } catch (error) {
+      // No destruir silenciosamente sin log detallado
+      console.error('❌ Error al inicializar el Enemigo:', error);
+      // Opcional: dejar el enemigo pero sin físicas/animación; aquí lo destruimos pero documentado
+      this.destroy();
+    }
+  }
 
-		const targetPos = new CANNON.Vec3(
-			this.playerRef.body.position.x,
-			this.playerRef.body.position.y,
-			this.playerRef.body.position.z
-		)
-
-        const enemyPos = this.body.position
-
-        //  Volumen según cercanía
-        const distance = enemyPos.distanceTo(targetPos)
-        if (distance < 4) {
-            this.speed = 2.5
-        } else {
-            this.speed = this.baseSpeed
-        }
-        const maxDistance = 10
-        const clampedDistance = Math.min(distance, maxDistance)
-        const proximityVolume = 1 - (clampedDistance / maxDistance)
-
-        if (this.proximitySound) {
-            this.proximitySound.setVolume(proximityVolume * 0.8)
-        }
-
-        //  Movimiento directo hacia el robot
-		const direction = new CANNON.Vec3(
-			targetPos.x - enemyPos.x,
-			targetPos.y - enemyPos.y,
-			targetPos.z - enemyPos.z
-		)
-
-		if (direction.length() > 0.5) {
-            direction.normalize()
-            direction.scale(this.speed, direction)
-            this.body.velocity.x = direction.x
-			this.body.velocity.y = direction.y
-            this.body.velocity.z = direction.z
-        }
-
-        //  Sincronizar modelo visual
-        this.model.position.copy(this.body.position)
+  setModel() {
+    const resource = this.resources?.items?.enemyRedModel;
+    if (!resource) {
+      throw new Error('El recurso "enemyRedModel" no está cargado en resources.items.');
     }
 
-    destroy() {
-        if (this.model) {
-            this.scene.remove(this.model)
-        }
+    // Clonar escena / mesh
+    this.model = resource.scene.clone(true);
+    this.model.scale.set(CONFIG.modelScale, CONFIG.modelScale, CONFIG.modelScale);
 
-        if (this.proximitySound) {
-            this.proximitySound.stop()
-        }
+    // Asegurarse de tener una posición THREE.Vector3
+    this.model.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
 
-        if (this.body) {
-            this.body.removeEventListener('collide', this._onCollide)
+    this.scene.add(this.model);
+    this.model.visible = true;
 
-            if (this.physicsWorld.bodies.includes(this.body)) {
-                this.physicsWorld.removeBody(this.body)
-            }
+    this.model.traverse((child) => {
+      if (child.isMesh || child instanceof THREE.Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }
 
-            this.body = null
-        }
+  setAnimation() {
+    const resource = this.resources?.items?.enemyRedModel;
+    if (!resource) {
+      console.warn('No hay resource.animations para Enemy.');
+      this.animation = null;
+      return;
     }
+
+    this.animation = {
+      mixer: new THREE.AnimationMixer(this.model),
+      actions: {},
+      current: null
+    };
+
+    // debug: listar nombres de animaciones disponibles
+    if (Array.isArray(resource.animations)) {
+      console.debug('Enemy: animaciones disponibles ->', resource.animations.map(a => a.name));
+    }
+
+    for (const [actionKey, animName] of Object.entries(CONFIG.requiredAnimations)) {
+      const clip = resource.animations?.find(anim => anim.name === animName);
+      if (clip) {
+        this.animation.actions[actionKey] = this.animation.mixer.clipAction(clip);
+      } else {
+        console.warn(`⚠️ Animación de Enemigo "${animName}" no encontrada. actionKey=${actionKey}`);
+      }
+    }
+
+    // No tirar error — mejor fallback
+    if (!this.animation.actions.idle) {
+      const anyClip = resource.animations?.[0];
+      if (anyClip) {
+        console.warn('Asignando clip por defecto como idle.');
+        this.animation.actions.idle = this.animation.mixer.clipAction(anyClip);
+      } else {
+        console.warn('No hay clips disponibles para animaciones del enemigo.');
+      }
+    }
+    if (!this.animation.actions.walking) {
+      // fallback: reutilizar idle en walking para evitar crash
+      this.animation.actions.walking = this.animation.actions.idle;
+    }
+
+    if (this.animation.actions.idle) {
+      this.animation.actions.current = this.animation.actions.idle;
+      this.animation.actions.current.play();
+    }
+
+    // Función play segura
+    this.animation.play = (name) => {
+      if (!this.animation) return;
+      const newAction = this.animation.actions[name];
+      const oldAction = this.animation.actions.current;
+      if (!newAction || newAction === oldAction) return;
+
+      try {
+        newAction.reset();
+        newAction.setLoop(THREE.LoopRepeat);
+        if (oldAction) oldAction.fadeOut(CONFIG.animationFadeDuration);
+        newAction.fadeIn(CONFIG.animationFadeDuration).play();
+        this.animation.actions.current = newAction;
+      } catch (err) {
+        console.warn('Error al cambiar animación de enemigo:', err);
+      }
+    };
+  }
+
+  setSounds() {
+    // Iniciamos con volumen 0 para que no moleste si suena antes de proximidad
+    this.proximitySound = new Sound('/sounds/alert.ogg', { loop: true, volume: 0 });
+    try {
+      this.proximitySound.play();
+    } catch (err) {
+      console.warn('No se pudo reproducir proximidad sound (tal vez audio no desbloqueado):', err);
+    }
+  }
+
+  setPhysics() {
+    if (!this.physics?.world) {
+      console.warn('No hay physics.world — el enemigo no tendrá física.');
+      return;
+    }
+
+    const shape = new CANNON.Sphere(CONFIG.sphereRadius);
+    const enemyMaterial = new CANNON.Material('enemyMaterial');
+
+    // Crear el body con posición explicita desde THREE->CANNON
+    this.body = new CANNON.Body({
+      mass: CONFIG.mass,
+      shape,
+      material: enemyMaterial,
+      position: toCannonVec3(this.initialPosition),
+      linearDamping: CONFIG.linearDamping
+    });
+
+    this.physics.world.addBody(this.body);
+    this.model.userData.physicsBody = this.body;
+
+    // Manejo de colisiones
+    this._onCollide = (event) => {
+      try {
+        if (event.body === this.playerRef?.body) {
+          this.playerRef.die?.();
+          new FinalPrizeParticles({
+            scene: this.scene,
+            targetPosition: this.body.position,
+            sourcePosition: this.body.position,
+            experience: this.experience
+          });
+          this.destroy();
+        }
+      } catch (err) {
+        console.error('Error manejando colisión de enemigo:', err);
+      }
+    };
+
+    this.body.addEventListener('collide', this._onCollide);
+  }
+
+  update(deltaTime) {
+    if (this.isDestroyed) return;
+    if (!this.body || !this.playerRef?.body) {
+      // Si no hay físicas o target, intentar posicionar el mesh en initialPosition
+      if (this.model && (!this.body)) {
+        // asegurar que se vea en scene
+        this.model.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
+      }
+      return;
+    }
+
+    const targetPos = this.targetPosition.copy(this.playerRef.body.position);
+    const enemyPos = this.body.position;
+    const distance = enemyPos.distanceTo(targetPos);
+
+    if (distance > CONFIG.stopDistance) {
+      this.moveDirection.copy(targetPos);
+      this.moveDirection.vsub(enemyPos, this.moveDirection);
+      this.moveDirection.normalize();
+
+      const speed = distance < CONFIG.chaseDistance ? CONFIG.chaseSpeed : CONFIG.baseSpeed;
+      // scale en cannon-es: scale(number, target)
+      this.moveDirection.scale(speed, this.moveDirection);
+
+      this.body.velocity.x = this.moveDirection.x;
+      this.body.velocity.y = this.moveDirection.y;
+      this.body.velocity.z = this.moveDirection.z;
+
+      this.animation?.play('walking');
+
+      // rotación visual: preferible sincronizar con quaternion de cuerpo si existe
+      if (this.model) {
+        // mirar hacia la dirección XZ
+        const lookTarget = new THREE.Vector3(
+          this.model.position.x + this.moveDirection.x,
+          this.model.position.y,
+          this.model.position.z + this.moveDirection.z
+        );
+        this.model.lookAt(lookTarget);
+      }
+    } else {
+      this.body.velocity.set(0, 0, 0);
+      this.animation?.play('idle');
+    }
+
+    // Sincronizar modelo visual con cuerpo físico (usar set para evitar problemas de tipos)
+    if (this.model && this.body) {
+      this.model.position.set(this.body.position.x, this.body.position.y, this.body.position.z);
+      // si quieres rotación física:
+      this.model.quaternion.set(
+        this.body.quaternion.x,
+        this.body.quaternion.y,
+        this.body.quaternion.z,
+        this.body.quaternion.w
+      );
+    }
+
+    // sonido de proximidad
+    const proximityVolume = Math.max(0, 1 - (distance / CONFIG.soundMaxDistance));
+    this.proximitySound?.setVolume(proximityVolume * 0.8);
+
+    // actualiza animaciones
+    this.animation?.mixer?.update(deltaTime);
+  }
+
+  destroy() {
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
+
+    try { this.proximitySound?.stop(); } catch { /* Ignorar errores al detener el sonido de proximidad */ }
+
+    if (this.model?.parent) {
+      this.scene.remove(this.model);
+    }
+
+    if (this.body) {
+      this.body.removeEventListener('collide', this._onCollide);
+      if (this.physics?.world?.bodies?.includes(this.body)) {
+        this.physics.world.removeBody(this.body);
+      }
+      this.body = null;
+    }
+  }
 }

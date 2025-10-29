@@ -31,7 +31,16 @@ export default [
         type: 'gltfModel',
         path: '/models/Robot/Robot.glb'
     },
-
+    {
+        name: 'enemyRedModel',
+        type: 'gltfModel',
+        path: '/models/Enemy/Enemy_Red.glb'
+    },
+    {
+        name: 'Portal',
+        type: 'gltfModel',
+        path: '/models/Portal/Portal.glb'
+    },
     {
         "name": "2story_columns.001_lev1",
         "type": "gltfModel",

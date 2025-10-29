@@ -57,9 +57,9 @@ export default class GameLogic {
       const firstEnemy = enemies[0];
       const enemyMesh = firstEnemy?.model || firstEnemy?.group;
       if (enemyMesh) {
-        enemyMesh.scale.set(1.3, 1.3, 1.3);
+        enemyMesh.scale.set(6, 6, 6);
         setTimeout(() => {
-          enemyMesh.scale.set(1, 1, 1);
+          enemyMesh.scale.set(6, 6, 6);
         }, 500);
       }
 
