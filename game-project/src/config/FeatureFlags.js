@@ -43,15 +43,6 @@ export const FEATURES = {
     VERBOSE_LOGGING: false,
 
     // ========================================
-    // EXPERIENCIA VR
-    // ========================================
-    /**
-     * Habilitar soporte VR (WebXR)
-     * Permite jugar con dispositivos de realidad virtual
-     */
-    VR_ENABLED: true,
-
-    // ========================================
     // GAMEPLAY
     // ========================================
     /**

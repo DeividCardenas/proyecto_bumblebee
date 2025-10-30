@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import Debug from './Utils/Debug.js'
 import Sizes from './Utils/Sizes.js'
 import Time from './Utils/Time.js'
-import VRIntegration from '../integrations/VRIntegration.js'
 import Camera from './Camera.js'
 import Renderer from './Renderer.js'
 import ModalManager from './Utils/ModalManager.js'
@@ -82,13 +81,6 @@ export default class Experience {
     this.camera = new Camera(this)
     this.renderer = new Renderer(this)
 
-    // 🚀 Dolly para VR movement
-    this.vrDolly = new THREE.Group()
-    this.vrDolly.name = 'VR_DOLLY'
-    this.vrDolly.add(this.camera.instance)
-    this.scene.add(this.vrDolly)
-
-
     // Sistema multijugador (controlado por feature flag)
     if (FEATURES.MULTIPLAYER_ENABLED) {
       this.socketManager = new SocketManager(this)
@@ -96,21 +88,12 @@ export default class Experience {
     }
 
 
-    // Modal y VR
+    // Modal
     this.modal = new ModalManager({ container: document.body })
-    this.vr = new VRIntegration({
-      renderer: this.renderer.instance,
-      scene: this.scene,
-      camera: this.camera.instance,
-      vrDolly: this.vrDolly,
-      modalManager: this.modal,
-      experience: this
-    })
 
     // Menú
     this.menu = new CircularMenu({
       container: document.body,
-      vrIntegration: this.vr,
       onAudioToggle: () => this.world.toggleAudio(),
       onWalkMode: () => {
         this.resumeAudioContext()
@@ -199,13 +182,9 @@ export default class Experience {
   }
 
   startLoop() {
-    this.vr.setUpdateCallback((delta) => this.update(delta))
-
     this.time.on('tick', () => {
-      if (!this.renderer.instance.xr.isPresenting) {
-        const delta = this.time.delta * 0.001
-        this.update(delta)
-      }
+      const delta = this.time.delta * 0.001
+      this.update(delta)
     })
   }
 
@@ -215,12 +194,8 @@ export default class Experience {
   }
 
   update(delta) {
-    if (!this.isThirdPerson && !this.renderer.instance.xr.isPresenting) {
+    if (!this.isThirdPerson) {
       this.camera.update()
-    }
-
-    if (this.renderer.instance.xr.isPresenting) {
-      this.adjustCameraForVR()
     }
 
     this.world.update(delta)
@@ -235,15 +210,6 @@ export default class Experience {
     // Actualizar debugger de física si está habilitado
     if (FEATURES.PHYSICS_DEBUG && this.debugger) {
       this.debugger.update()
-    }
-  }
-
-  adjustCameraForVR() {
-    if (this.renderer.instance.xr.isPresenting && this.world.robot?.group) {
-      const pos = this.world.robot.group.position
-      this.camera.instance.position.copy(pos).add(new THREE.Vector3(0, 1.6, 0))
-      this.camera.instance.lookAt(pos.clone().add(new THREE.Vector3(0, 1.6, -1)))
-      // console.log('🎯 Cámara ajustada a robot en VR')
     }
   }
 
