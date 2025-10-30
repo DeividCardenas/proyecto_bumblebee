@@ -241,7 +241,7 @@ export default class Robot {
     }
 
     moveInDirection() {
-        if (!this.isInitialized || !window.userInteracted || !this.experience.renderer.instance.xr.isPresenting) {
+        if (!this.isInitialized || !window.userInteracted) {
             return;
         }
 

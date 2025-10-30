@@ -274,15 +274,6 @@ export const GAME_CONFIG = {
     },
 
     // ========================================
-    // VR (WebXR)
-    // ========================================
-    vr: {
-        // Altura de la cámara sobre el jugador en VR
-        cameraHeightOffset: 1.6,
-        lookAheadDistance: 1.0
-    },
-
-    // ========================================
     // UI / HUD
     // ========================================
     ui: {

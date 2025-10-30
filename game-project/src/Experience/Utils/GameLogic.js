@@ -113,13 +113,9 @@ export default class GameLogic {
     if (this.collisionCheckFrame < this.collisionCheckInterval) return;
     this.collisionCheckFrame = 0;
 
-    // Determinar la posición del jugador (VR o PC)
-    let playerPos = null;
-    if (this.experience.renderer.instance.xr.isPresenting) {
-      playerPos = this.experience.camera.instance.position;
-    } else if (this.player?.body?.position) {
-      playerPos = this.player.body.position;
-    } else {
+    // Determinar la posición del jugador
+    const playerPos = this.player?.body?.position;
+    if (!playerPos) {
       return; // No hay posición válida
     }
 
