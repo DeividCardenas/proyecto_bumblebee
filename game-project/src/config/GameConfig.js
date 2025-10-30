@@ -219,11 +219,16 @@ export const GAME_CONFIG = {
             zoomSpeed: 0.5,                     // Velocidad de zoom con scroll
             defaultDistance: 8,                 // Distancia inicial
 
-            // Rotación
+            // Rotación (Mouse/Desktop)
             rotationSpeed: 0.003,               // Sensibilidad de rotación horizontal (yaw)
             verticalRotationSpeed: 0.002,       // Sensibilidad de rotación vertical (pitch)
             minPitch: -Math.PI / 6,             // Límite hacia abajo (-30°)
             maxPitch: Math.PI / 3,              // Límite hacia arriba (60°)
+
+            // Rotación Táctil (Touch/Móvil/Tablet)
+            touchRotationSpeed: 0.0045,         // Sensibilidad táctil horizontal (1.5x más sensible)
+            touchVerticalRotationSpeed: 0.003,  // Sensibilidad táctil vertical (1.5x más sensible)
+            touchZoomSpeed: 0.05,               // Sensibilidad de pinch-to-zoom
 
             // Suavizado (lerp factors)
             positionLerp: 0.1,                  // Suavizado de posición (más alto = más rápido)

@@ -22,15 +22,22 @@ export default class MobileControls {
   }
 
   createJoystick() {
+    // Detectar si es tablet para usar tamaño más grande
+    const isTablet = window.innerWidth >= 768
+    const containerSize = isTablet ? 160 : 140
+    const stickSize = isTablet ? 70 : 60
+
     this.container = document.createElement('div')
     Object.assign(this.container.style, {
       position: 'fixed',
       bottom: '5vh',
       left: '5vw',
-      width: '120px',
-      height: '120px',
+      width: `${containerSize}px`,
+      height: `${containerSize}px`,
       borderRadius: '50%',
-      background: 'rgba(0,0,0,0.3)',
+      background: 'rgba(0, 255, 247, 0.15)',
+      border: '3px solid rgba(0, 255, 247, 0.4)',
+      boxShadow: '0 0 20px rgba(0, 255, 247, 0.3), inset 0 0 20px rgba(0, 255, 247, 0.1)',
       zIndex: '9999',
       touchAction: 'none',
       userSelect: 'none'
@@ -41,10 +48,12 @@ export default class MobileControls {
       position: 'absolute',
       top: '50%',
       left: '50%',
-      width: '50px',
-      height: '50px',
+      width: `${stickSize}px`,
+      height: `${stickSize}px`,
       borderRadius: '50%',
-      background: 'rgba(255,255,255,0.8)',
+      background: 'rgba(0, 255, 247, 0.8)',
+      border: '2px solid rgba(255, 255, 255, 0.9)',
+      boxShadow: '0 0 15px rgba(0, 255, 247, 0.6)',
       transform: 'translate(-50%, -50%)',
       transition: '0.1s',
       pointerEvents: 'none'
@@ -54,7 +63,7 @@ export default class MobileControls {
     document.body.appendChild(this.container)
 
     this.center = { x: 0, y: 0 }
-    this.radius = 60
+    this.radius = containerSize / 2
 
     this.container.addEventListener('touchstart', this.onStart.bind(this))
     this.container.addEventListener('touchmove', this.onMove.bind(this))
@@ -62,22 +71,27 @@ export default class MobileControls {
   }
 
   createJumpButton() {
+    const isTablet = window.innerWidth >= 768
+    const buttonSize = isTablet ? 80 : 70
+
     this.jumpButton = document.createElement('button')
     this.jumpButton.innerText = '🆙'
     Object.assign(this.jumpButton.style, {
       position: 'fixed',
       top: '40vh',
       left: '5vw',
-      width: '60px',
-      height: '60px',
+      width: `${buttonSize}px`,
+      height: `${buttonSize}px`,
       borderRadius: '50%',
-      background: 'rgba(255, 255, 255, 0.5)',
-      color: '#000',
-      fontSize: '24px',
+      background: 'rgba(0, 255, 247, 0.25)',
+      border: '3px solid rgba(0, 255, 247, 0.5)',
+      color: '#00fff7',
+      fontSize: isTablet ? '32px' : '28px',
       fontWeight: 'bold',
       zIndex: 9999,
-      border: 'none',
-      boxShadow: '0 0 10px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 20px rgba(0, 255, 247, 0.4)',
+      touchAction: 'none',
+      userSelect: 'none'
     })
 
     this.jumpButton.addEventListener('touchstart', () => {
