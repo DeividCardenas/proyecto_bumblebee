@@ -28,28 +28,46 @@ export default class Prize {
     // 1. Asignamos el modelo (ya no lo clonamos, asumimos que viene clonado)
     this.model = model;
 
-    // 2. Centramos el modelo clonado
-    const bbox = new THREE.Box3().setFromObject(this.model);
-    const center = new THREE.Vector3();
-    bbox.getCenter(center);
-    this.model.position.sub(center); // Movemos el modelo para que su centro esté en el (0,0,0) local
+    // 2. Centramos el modelo SOLO si NO es el portal final
+    // El portal ya viene bien posicionado y centrarlo es muy costoso
+    if (this.role !== "final_prize") {
+      try {
+        const bbox = new THREE.Box3().setFromObject(this.model);
+        const center = new THREE.Vector3();
+        bbox.getCenter(center);
+        this.model.position.sub(center);
+      } catch (error) {
+        console.warn("No se pudo centrar el modelo:", error);
+        // Si falla, dejamos el modelo en su posición original
+      }
+    }
 
-    // 3. Añadimos el modelo ya centrado al pivot
+    // 3. Añadimos el modelo al pivot
     this.pivot.add(this.model);
 
     // 4. Asignamos la posición final al PIVOT
     this.pivot.position.copy(position);
 
-    // Asignar userData a los hijos
-    this.model.traverse((child) => {
-      if (child.isMesh) {
-        child.userData.interactivo = true;
-      }
-    });
+    // Asignar userData a los hijos (solo si no es el portal para evitar costo)
+    if (this.role !== "final_prize") {
+      this.model.traverse((child) => {
+        if (child.isMesh) {
+          child.userData.interactivo = true;
+        }
+      });
 
-    // Ejes para depuración
-    const helper = new THREE.AxesHelper(0.5);
-    this.pivot.add(helper);
+      // Ejes para depuración (solo para premios normales)
+      const helper = new THREE.AxesHelper(0.5);
+      this.pivot.add(helper);
+    } else {
+      // Para el portal: OPTIMIZACIÓN EXTREMA
+      // Si el modelo ya está congelado (matrixAutoUpdate = false), 
+      // significa que World.js ya lo configuró, no hacer nada más
+      this.pivot.userData.interactivo = true;
+      this.pivot.userData.isPortal = true; // Marcador especial
+      
+      console.log(`✅ Portal creado - modelo congelado: ${!this.model.matrixAutoUpdate}`);
+    }
 
     // 5. Añadir el pivot (que contiene el modelo) a la escena
     this.scene.add(this.pivot);
@@ -61,23 +79,24 @@ export default class Prize {
 
   /**
    * ACTUALIZADO: El método update ahora maneja ambos casos.
-   * CRÍTICO: El portal (final_prize) NO debe rotar - permanece completamente estático
+   * CRÍTICO: El portal (final_prize) NO debe hacer NADA - completamente estático
    */
   update(delta) {
+    // Si está recolectado, no hacer nada
     if (this.collected) return;
 
-    // ¡IMPORTANTE! El portal final NO debe rotar ni animarse
-    // Solo las monedas (role === "default") rotan
+    // ¡IMPORTANTE! El portal final es completamente estático
+    // Retornar inmediatamente para evitar cualquier procesamiento
     if (this.role === "final_prize") {
-      // Portal completamente estático - no hacer nada
       return;
     }
 
+    // Solo las monedas (role === "default") pueden tener animaciones o rotaciones
     if (this.mixer) {
       // Si tenemos un mixer (para animaciones), actualizamos el mixer
       this.mixer.update(delta);
     } else {
-      // Si no (es una moneda normal), solo giramos el pivot
+      // Monedas normales: rotar el pivot
       this.pivot.rotation.y += delta * 1.5;
     }
   }
@@ -92,21 +111,26 @@ export default class Prize {
       this.sound.play();
     }
 
-    // --- ¡CAMBIO! Comentamos la limpieza del mixer ---
-    // if (this.mixer) {
-    //   this.mixer.stopAllAction();
-    //   this.mixer = null;
-    // }
-    // ---
+    // Limpieza del mixer si existe
+    if (this.mixer) {
+      this.mixer.stopAllAction();
+      this.mixer = null;
+    }
 
     // Eliminamos el pivot de la escena.
     this.scene.remove(this.pivot);
     
-    // (Opcional: Limpieza de memoria)
+    // Limpieza profunda de memoria
     this.model.traverse((child) => {
       if (child.isMesh) {
         child.geometry?.dispose();
-        child.material?.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => mat.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
       }
     });
   }
