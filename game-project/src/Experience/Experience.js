@@ -181,27 +181,20 @@ export default class Experience {
   toggleWalkMode() {
     this.isThirdPerson = !this.isThirdPerson
 
-    const controls = this.camera.controls
-    const cam = this.camera.instance
-
     if (this.isThirdPerson) {
-      controls.enabled = false
-      console.log('🟡 Tercera persona ON')
+      // Modo Tercera Persona: deshabilitar OrbitControls
+      this.camera.setEnabled(false)
+      logger.info('📷', 'Modo Tercera Persona activado')
+
+      // Opcional: resetear rotación de ThirdPersonCamera
+      if (this.world?.thirdPersonCamera) {
+        this.world.thirdPersonCamera.reset()
+      }
     } else {
-      controls.enabled = true
-      controls.enableRotate = true
-      controls.enableZoom = true
-      controls.enablePan = false
-      controls.minPolarAngle = 0
-      controls.maxPolarAngle = Math.PI * 0.9
-
-      cam.position.set(12, 5, 10)
-      cam.up.set(0, 1, 0)
-      controls.target.set(0, 0, 0)
-      cam.lookAt(controls.target)
-      controls.update()
-
-      console.log('🟢 Vista global restaurada')
+      // Modo Libre/Debug: habilitar OrbitControls y resetear posición
+      this.camera.setEnabled(true)
+      this.camera.reset()
+      logger.info('📷', 'Modo Vista Libre activado')
     }
   }
 

@@ -176,18 +176,100 @@ export const GAME_CONFIG = {
     // CÁMARA
     // ========================================
     camera: {
-        // Tercera persona
-        thirdPerson: {
-            distance: 5,
-            height: 2,
-            smoothing: 0.1
+        // Configuración global de cámara
+        global: {
+            fov: 35,                            // Field of view
+            near: 0.1,                          // Near clipping plane
+            far: 100,                           // Far clipping plane
+            defaultPosition: { x: 12, y: 5, z: 10 },
+            target: { x: 0, y: 0, z: 0 }
         },
 
-        // Primera persona / Global
-        global: {
-            defaultPosition: { x: 12, y: 5, z: 10 },
-            target: { x: 0, y: 0, z: 0 },
-            maxPolarAngle: Math.PI * 0.9
+        // OrbitControls (modo libre/debug)
+        orbit: {
+            enableDamping: true,
+            dampingFactor: 0.05,
+            enableZoom: true,
+            enablePan: true,
+            enableRotate: true,
+
+            // Límites de zoom
+            minDistance: 3,
+            maxDistance: 50,
+
+            // Límites de rotación vertical
+            minPolarAngle: Math.PI * 0.1,      // No puede mirar completamente hacia arriba
+            maxPolarAngle: Math.PI * 0.85,     // No puede mirar completamente hacia abajo
+
+            // Velocidades
+            rotateSpeed: 1.0,
+            zoomSpeed: 1.0,
+            panSpeed: 1.0
+        },
+
+        // Tercera Persona (seguimiento del robot)
+        thirdPerson: {
+            // Offset de la cámara respecto al robot
+            offset: { x: 0, y: 4, z: -8 },     // Detrás (z negativo) y arriba (y positivo)
+            lookAtOffset: { x: 0, y: 1, z: 0 }, // Punto de enfoque (ligeramente arriba del robot)
+
+            // Zoom dinámico
+            minDistance: 3,                     // Distancia mínima (scroll acercar)
+            maxDistance: 15,                    // Distancia máxima (scroll alejar)
+            zoomSpeed: 0.5,                     // Velocidad de zoom con scroll
+            defaultDistance: 8,                 // Distancia inicial
+
+            // Rotación
+            rotationSpeed: 0.003,               // Sensibilidad de rotación horizontal (yaw)
+            verticalRotationSpeed: 0.002,       // Sensibilidad de rotación vertical (pitch)
+            minPitch: -Math.PI / 6,             // Límite hacia abajo (-30°)
+            maxPitch: Math.PI / 3,              // Límite hacia arriba (60°)
+
+            // Suavizado (lerp factors)
+            positionLerp: 0.1,                  // Suavizado de posición (más alto = más rápido)
+            lookAtLerp: 0.15,                   // Suavizado de punto de mira
+            zoomLerp: 0.1,                      // Suavizado de zoom
+
+            // Colisión con geometría
+            enableCollision: true,              // Activar detección de colisiones
+            collisionRadius: 0.5,               // Radio de la "esfera" de la cámara
+            collisionLayers: ['levelObject'],   // Capas con las que colisionar (userData)
+
+            // Comportamiento
+            inheritRotation: true,              // Heredar rotación del robot
+            autoRotate: false,                  // Auto-rotar detrás del robot
+            autoRotateSpeed: 2.0                // Velocidad de auto-rotación
+        },
+
+        // Primera Persona
+        firstPerson: {
+            // Offset respecto al robot (altura de ojos)
+            eyeHeight: 1.5,                     // Altura de los ojos sobre el robot
+            lookAheadDistance: 0.2,             // Qué tan adelante mirar
+
+            // Control de mouse
+            mouseSensitivity: 0.002,            // Sensibilidad general del mouse
+            horizontalSensitivity: 1.0,         // Multiplicador horizontal
+            verticalSensitivity: 0.8,           // Multiplicador vertical
+
+            // Límites de rotación
+            minPitch: -Math.PI / 2.5,           // Límite hacia abajo (-72°)
+            maxPitch: Math.PI / 2.5,            // Límite hacia arriba (72°)
+
+            // Suavizado
+            positionLerp: 0.3,                  // Suavizado de posición
+            rotationLerp: 0.2,                  // Suavizado de rotación
+
+            // Opciones
+            invertY: false,                     // Invertir eje Y (mouse)
+            lockPointer: false                  // Bloquear puntero (Pointer Lock API)
+        },
+
+        // Transiciones entre modos
+        transition: {
+            enabled: true,                      // Activar transiciones suaves
+            duration: 0.5,                      // Duración en segundos
+            easing: 'easeInOutCubic'            // Función de easing
         }
     },
 
