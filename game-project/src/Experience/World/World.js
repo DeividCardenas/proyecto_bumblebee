@@ -377,17 +377,24 @@ showFinalPrize() {
     // 4. Creamos una instancia real de la clase Prize
     const finalPortalPrize = new Prize({
       model: portalModel,
-      position: portalPosition, // <-- Pasa la nueva posición Y=1
+      position: portalPosition,
       scene: this.scene,
       role: "final_prize",
-      
+
       // --- ¡CAMBIO IMPORTANTE! ---
       // No le pasamos las animaciones para evitar el cuelgue.
       // animations: portalResource.animations // <-- LÍNEA DESACTIVADA
     });
 
-    // 5. Hacemos visible el premio
+    // 5. Hacemos visible el premio y configuramos userData
     finalPortalPrize.pivot.visible = true;
+
+    // IMPORTANTE: Marcar el portal para que la cámara lo ignore en colisiones
+    // El portal NO debe bloquear la cámara
+    finalPortalPrize.pivot.userData.ignoreCamera = true;
+    finalPortalPrize.model.traverse((child) => {
+      child.userData.ignoreCamera = true;
+    });
 
     // 6. Añadir el nuevo premio al array que GameLogic revisa
     if (!this.loader || !this.loader.prizes) {

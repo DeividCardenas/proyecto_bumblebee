@@ -157,7 +157,7 @@ export const GAME_CONFIG = {
 
         // Distancias (en unidades 3D)
         prizeCollectionDistance: 1.2,     // Distancia mínima para recoger premios (monedas)
-        portalCollectionDistance: 3.0,    // Distancia para entrar al portal (más tolerante)
+        portalCollectionDistance: 5.0,    // Distancia para entrar al portal (MUY tolerante - fácil acceso)
         enemyDefeatDistance: 1.0,         // Distancia para que enemigo atrape al jugador
         physicsOptimizationRadius: 40,    // Radio para activar/desactivar física por distancia
 

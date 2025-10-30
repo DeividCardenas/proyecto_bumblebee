@@ -233,6 +233,7 @@ export default class ThirdPersonCamera {
     /**
      * Detectar colisiones con geometría usando raycasting
      * Ajusta la posición de la cámara si hay obstáculos
+     * MEJORADO: Detecta correctamente paredes, pisos y estructuras
      */
     checkCollisions(idealPosition) {
         if (!this.config.enableCollision || !this.target) {
@@ -244,21 +245,59 @@ export default class ThirdPersonCamera {
             .subVectors(idealPosition, this.target.position)
 
         const distance = direction.length()
+
+        if (distance < 0.1) {
+            // Si la distancia es muy pequeña, no hay colisión posible
+            return idealPosition
+        }
+
         direction.normalize()
 
         // Configurar raycaster desde el target hacia la cámara
+        // IMPORTANTE: Usamos la posición del target (robot) como origen
         this.raycaster.set(this.target.position, direction)
         this.raycaster.far = distance
 
         // Buscar intersecciones con objetos de nivel
         const intersects = this.raycaster.intersectObjects(
             this.scene.children,
-            true // recursive
+            true // recursive - busca en todos los hijos
         )
 
-        // Filtrar solo objetos con userData.levelObject
+        // Filtrar colisiones válidas:
+        // 1. Debe tener userData.levelObject
+        // 2. Debe ser un Mesh (geometría sólida)
+        // 3. No debe ser el robot mismo ni sus hijos
+        // 4. No debe estar marcado con ignoreCamera (ej: portal)
         const validIntersects = intersects.filter(intersect => {
-            return intersect.object.userData?.levelObject === true
+            // Verificar que sea un mesh
+            if (!intersect.object.isMesh) {
+                return false
+            }
+
+            // IMPORTANTE: Ignorar objetos marcados explícitamente (ej: portal)
+            if (intersect.object.userData?.ignoreCamera === true) {
+                return false
+            }
+
+            // Verificar userData.levelObject o que tenga physicsBody
+            const hasLevelObject = intersect.object.userData?.levelObject === true
+            const hasPhysicsBody = intersect.object.userData?.physicsBody !== undefined
+
+            // Verificar que no sea parte del robot (target)
+            let parent = intersect.object.parent
+            while (parent) {
+                if (parent === this.target) {
+                    return false // Es parte del robot, ignorar
+                }
+                // También verificar ignoreCamera en padres
+                if (parent.userData?.ignoreCamera === true) {
+                    return false
+                }
+                parent = parent.parent
+            }
+
+            return hasLevelObject || hasPhysicsBody
         })
 
         if (validIntersects.length > 0) {
@@ -266,10 +305,19 @@ export default class ThirdPersonCamera {
             const firstHit = validIntersects[0]
             const hitDistance = firstHit.distance - this.config.collisionRadius
 
-            if (hitDistance < distance) {
+            if (hitDistance < distance && hitDistance > 0.1) {
                 // Colocar la cámara justo antes del obstáculo
                 const adjustedPosition = this.target.position.clone()
                 adjustedPosition.addScaledVector(direction, Math.max(hitDistance, 0.5))
+
+                // Debug log (opcional)
+                if (GAME_CONFIG.debug.enableVerboseLogs) {
+                    logger.debug('📷 Colisión de cámara detectada', {
+                        objeto: firstHit.object.name || 'sin nombre',
+                        distanciaOriginal: distance.toFixed(2),
+                        distanciaAjustada: hitDistance.toFixed(2)
+                    })
+                }
 
                 return adjustedPosition
             }
