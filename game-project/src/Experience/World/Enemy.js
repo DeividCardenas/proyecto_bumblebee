@@ -38,6 +38,13 @@ export default class Enemy {
     this.moveDirection = new CANNON.Vec3();
     this.isDestroyed = false;
 
+    // Guardar posición inicial para límite de persecución
+    this.spawnPosition = new CANNON.Vec3(
+      this.initialPosition.x,
+      this.initialPosition.y,
+      this.initialPosition.z
+    );
+
     try {
       this.setSounds();
       this.setModel();
@@ -66,12 +73,28 @@ export default class Enemy {
     this.scene.add(this.model);
     this.model.visible = true;
 
+    // CRÍTICO: Forzar visibilidad de TODOS los children del modelo
+    // Esto soluciona el problema de que solo aparezcan armas y luces
     this.model.traverse((child) => {
+      // Forzar visibilidad (fix para modelos GLTF con meshes invisibles)
+      child.visible = true;
+
       if (child.isMesh || child instanceof THREE.Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
+
+        // Asegurar que el material sea visible también
+        if (child.material) {
+          child.material.visible = true;
+          // Si tiene transparencia desactivada, asegurarse que sea opaco
+          if (child.material.transparent === false) {
+            child.material.opacity = 1.0;
+          }
+        }
       }
     });
+
+    logger.info('👹', `Modelo de enemigo cargado con ${this.model.children.length} children`);
   }
 
   setAnimation() {
@@ -208,11 +231,39 @@ export default class Enemy {
     const enemyPos = this.body.position;
     const distance = enemyPos.distanceTo(targetPos);
 
-    if (distance > CONFIG.stopDistance) {
+    // Verificar distancia desde spawn point (zona de persecución limitada)
+    const distanceFromSpawn = enemyPos.distanceTo(this.spawnPosition);
+
+    // Si el enemigo se alejó mucho de su spawn, volver al punto inicial
+    if (distanceFromSpawn > CONFIG.returnToSpawnDistance) {
+      logger.debug('👹', 'Enemigo demasiado lejos del spawn, regresando...');
+      this.moveDirection.copy(this.spawnPosition);
+      this.moveDirection.vsub(enemyPos, this.moveDirection);
+      this.moveDirection.normalize();
+      this.moveDirection.scale(CONFIG.baseSpeed, this.moveDirection);
+
+      this.body.velocity.x = this.moveDirection.x;
+      this.body.velocity.y = this.moveDirection.y;
+      this.body.velocity.z = this.moveDirection.z;
+
+      this.animation?.play('walking');
+
+      if (this.model) {
+        const lookTarget = new THREE.Vector3(
+          this.model.position.x + this.moveDirection.x,
+          this.model.position.y,
+          this.model.position.z + this.moveDirection.z
+        );
+        this.model.lookAt(lookTarget);
+      }
+    }
+    // Si el jugador está dentro del rango de persecución
+    else if (distance < CONFIG.maxChaseDistance && distance > CONFIG.stopDistance) {
       this.moveDirection.copy(targetPos);
       this.moveDirection.vsub(enemyPos, this.moveDirection);
       this.moveDirection.normalize();
 
+      // Velocidad variable: más rápido si está cerca (persecución activa)
       const speed = distance < CONFIG.chaseDistance ? CONFIG.chaseSpeed : CONFIG.baseSpeed;
       // scale en cannon-es: scale(number, target)
       this.moveDirection.scale(speed, this.moveDirection);
@@ -234,6 +285,7 @@ export default class Enemy {
         this.model.lookAt(lookTarget);
       }
     } else {
+      // Detenerse si está muy cerca o el jugador está fuera de rango
       this.body.velocity.set(0, 0, 0);
       this.animation?.play('idle');
     }
