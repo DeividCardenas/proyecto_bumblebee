@@ -18,6 +18,7 @@ export default class MobileControls {
     if (this.isTouchDevice) {
       this.createJoystick()
       this.createJumpButton()
+      this.createCameraHint()
     }
   }
 
@@ -111,6 +112,10 @@ export default class MobileControls {
       y: rect.top + rect.height / 2
     }
     this.active = true
+
+    // Feedback visual: hacer brillar el joystick
+    this.container.style.boxShadow = '0 0 30px rgba(0, 255, 247, 0.6), inset 0 0 30px rgba(0, 255, 247, 0.2)'
+    this.container.style.borderColor = 'rgba(0, 255, 247, 0.7)'
   }
 
   onMove(e) {
@@ -157,6 +162,10 @@ export default class MobileControls {
     this.intensity = 0
     this.directionVector.set(0, 0)
     this.updateDirections({ up: false, down: false, left: false, right: false })
+
+    // Restaurar brillo normal
+    this.container.style.boxShadow = '0 0 20px rgba(0, 255, 247, 0.3), inset 0 0 20px rgba(0, 255, 247, 0.1)'
+    this.container.style.borderColor = 'rgba(0, 255, 247, 0.4)'
   }
 
   updateDirections(newDir) {
@@ -168,6 +177,50 @@ export default class MobileControls {
     this.direction = newDir
   }
 
+  createCameraHint() {
+    // Crear indicador de controles táctiles de cámara
+    this.cameraHint = document.createElement('div')
+    this.cameraHint.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 20px;">👆</span>
+        <span>Desliza para rotar cámara</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+        <span style="font-size: 20px;">🤏</span>
+        <span>Pellizca para zoom</span>
+      </div>
+    `
+    Object.assign(this.cameraHint.style, {
+      position: 'fixed',
+      top: '10px',
+      right: '10px',
+      background: 'rgba(0, 0, 0, 0.7)',
+      color: '#00fff7',
+      padding: '12px 16px',
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontFamily: 'sans-serif',
+      zIndex: '9999',
+      border: '1px solid rgba(0, 255, 247, 0.3)',
+      boxShadow: '0 0 10px rgba(0, 255, 247, 0.2)',
+      pointerEvents: 'none',
+      opacity: '0.9',
+      transition: 'opacity 0.3s'
+    })
+
+    document.body.appendChild(this.cameraHint)
+
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+      if (this.cameraHint) {
+        this.cameraHint.style.opacity = '0'
+        setTimeout(() => {
+          this.cameraHint?.remove()
+        }, 300)
+      }
+    }, 5000)
+  }
+
   simulateSpacebar(pressed) {
     if (!window.experience?.keyboard?.keys) return
     window.experience.keyboard.keys.space = pressed
@@ -176,5 +229,6 @@ export default class MobileControls {
   destroy() {
     this.container?.remove()
     this.jumpButton?.remove()
+    this.cameraHint?.remove()
   }
 }

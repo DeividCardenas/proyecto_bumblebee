@@ -93,6 +93,10 @@ export default class CircularMenu {
     })
 
     // HUD: Tiempo
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    const fontSize = isMobile ? '18px' : '16px'
+    const padding = isMobile ? '8px 14px' : '6px 12px'
+
     this.timer = document.createElement('div')
     this.timer.id = 'hud-timer'
     this.timer.innerText = '⏱ 0s'
@@ -100,15 +104,17 @@ export default class CircularMenu {
       position: 'fixed',
       top: '16px',
       left: '70px',
-      fontSize: '16px',
+      fontSize: fontSize,
       fontWeight: 'bold',
-      background: 'rgba(0,0,0,0.6)',
-      color: 'white',
-      padding: '6px 12px',
+      background: 'rgba(0,0,0,0.75)',
+      color: '#00fff7',
+      padding: padding,
       borderRadius: '8px',
       zIndex: 9999,
       fontFamily: 'monospace',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      border: '1px solid rgba(0, 255, 247, 0.3)',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
     })
     document.body.appendChild(this.timer)
 
@@ -120,20 +126,21 @@ export default class CircularMenu {
       position: 'fixed',
       top: '16px',
       right: '20px',
-      fontSize: '16px',
+      fontSize: fontSize,
       fontWeight: 'bold',
-      background: 'rgba(0,0,0,0.6)',
-      color: 'white',
-      padding: '6px 12px',
+      background: 'rgba(0,0,0,0.75)',
+      color: '#00fff7',
+      padding: padding,
       borderRadius: '8px',
       zIndex: 9999,
       fontFamily: 'monospace',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      border: '1px solid rgba(0, 255, 247, 0.3)',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
     })
     document.body.appendChild(this.status)
 
     // HUD: Jugadores
-
     this.playersLabel = document.createElement('div')
     this.playersLabel.id = 'hud-players'
     this.playersLabel.innerText = '👥 Jugadores: 1'
@@ -141,15 +148,17 @@ export default class CircularMenu {
       position: 'fixed',
       top: '16px',
       left: '140px',
-      fontSize: '16px',
+      fontSize: fontSize,
       fontWeight: 'bold',
-      background: 'rgba(0,0,0,0.6)',
-      color: 'white',
-      padding: '6px 12px',
+      background: 'rgba(0,0,0,0.75)',
+      color: '#00fff7',
+      padding: padding,
       borderRadius: '8px',
       zIndex: 9999,
       fontFamily: 'monospace',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      border: '1px solid rgba(0, 255, 247, 0.3)',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
     })
     document.body.appendChild(this.playersLabel)
 
