@@ -112,8 +112,8 @@ export const GAME_CONFIG = {
     // ENEMIGOS
     // ========================================
     enemy: {
-        // Escala del modelo 3D
-        modelScale: 0.6,
+        // Escala del modelo 3D (aumentada para mejor visibilidad)
+        modelScale: 0.8,
 
         // Física
         mass: 5,
@@ -121,13 +121,15 @@ export const GAME_CONFIG = {
         linearDamping: 0.01,
 
         // Velocidades
-        baseSpeed: 1.0,
-        chaseSpeed: 3.5,
+        baseSpeed: 1.5,           // Velocidad base (patrullaje)
+        chaseSpeed: 4.0,          // Velocidad al perseguir
 
         // Distancias de comportamiento
-        chaseDistance: 15.0,      // A qué distancia empieza a perseguir
-        stopDistance: 1.5,        // A qué distancia se detiene
-        soundMaxDistance: 12.0,   // Distancia máxima para escuchar sonido
+        chaseDistance: 20.0,      // A qué distancia empieza a perseguir (aumentado)
+        stopDistance: 2.0,        // A qué distancia se detiene (más tolerante)
+        maxChaseDistance: 35.0,   // Distancia máxima de persecución (zona limitada)
+        returnToSpawnDistance: 40.0, // A qué distancia vuelve al spawn
+        soundMaxDistance: 15.0,   // Distancia máxima para escuchar sonido
 
         // Animaciones
         animationFadeDuration: 0.2,
@@ -154,7 +156,8 @@ export const GAME_CONFIG = {
         levelTransitionDelay: 1000,       // Delay al cambiar de nivel
 
         // Distancias (en unidades 3D)
-        prizeCollectionDistance: 1.2,     // Distancia mínima para recoger premios
+        prizeCollectionDistance: 1.2,     // Distancia mínima para recoger premios (monedas)
+        portalCollectionDistance: 3.0,    // Distancia para entrar al portal (más tolerante)
         enemyDefeatDistance: 1.0,         // Distancia para que enemigo atrape al jugador
         physicsOptimizationRadius: 40,    // Radio para activar/desactivar física por distancia
 

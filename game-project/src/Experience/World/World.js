@@ -356,19 +356,23 @@ showFinalPrize() {
       logger.error("No se encontró el recurso 'Portal'. Revisa tu 'sources.js'.");
       return;
     }
-    
+
     // 2. Instanciar el modelo y la posición
     const portalModel = portalResource.scene.clone();
-    
-    // --- ¡CAMBIO DE POSICIÓN! ---
-    // Lo subimos 1 unidad en Y para que flote sobre el suelo (que está en Y=0)
-    const portalPosition = new THREE.Vector3(0, 1, 0); 
-    // --- FIN DEL CAMBIO ---
 
-    // 3. Forzamos visibilidad
+    // --- ¡MEJORA DE POSICIÓN! ---
+    // Colocamos el portal más alejado y visible desde el spawn (0, 0, 0)
+    // Posición estratégica: adelante en Z para que el jugador pueda verlo y alcanzarlo
+    const portalPosition = new THREE.Vector3(0, 1.5, -15);
+    // --- FIN DE MEJORA ---
+
+    // 3. Forzamos visibilidad y escalamos para mejor visualización
     portalModel.traverse((child) => {
       child.visible = true;
     });
+
+    // Escalamos el portal para hacerlo más visible (1.5x)
+    portalModel.scale.set(1.5, 1.5, 1.5);
     
     // 4. Creamos una instancia real de la clase Prize
     const finalPortalPrize = new Prize({
@@ -411,7 +415,7 @@ showFinalPrize() {
       this.portalSound.play();
     }
 
-    logger.info('✅', 'Portal (final_prize) creado en (0, 1, 0) y listo para usar.');
+    logger.info('✅', `Portal (final_prize) creado en (${portalPosition.x}, ${portalPosition.y}, ${portalPosition.z}) con radio de colección ${GAME_CONFIG.gameplay.portalCollectionDistance}`);
   }
 
   clearCurrentScene() {

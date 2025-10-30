@@ -136,7 +136,11 @@ export default class GameLogic {
       const dist = prize.pivot.position.distanceTo(playerPos);
 
       // --- LÓGICA DE RECOLECCIÓN ---
-      const collectionDistance = GAME_CONFIG.gameplay.prizeCollectionDistance;
+      // Usar radio mayor para el portal final (más fácil de alcanzar)
+      const collectionDistance = prize.role === "final_prize"
+        ? GAME_CONFIG.gameplay.portalCollectionDistance
+        : GAME_CONFIG.gameplay.prizeCollectionDistance;
+
       if (dist < collectionDistance) {
         prize.collect(); // El premio se auto-elimina y suena (si tiene sonido)
 
