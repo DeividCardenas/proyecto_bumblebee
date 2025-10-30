@@ -63,12 +63,18 @@ export default class ThirdPersonCamera {
         this.lastMouseX = 0
         this.lastMouseY = 0
 
+        // --- Control táctil (touch) ---
+        this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+        this.touches = new Map() // Almacenar múltiples toques
+        this.lastTouchDistance = 0 // Para pinch-to-zoom
+
         // --- Raycaster para colisiones ---
         this.raycaster = new THREE.Raycaster()
         this.raycaster.far = this.config.maxDistance
 
         // Inicializar
         this.setMouseListeners()
+        this.setTouchListeners() // NUEVO: soporte táctil
         this.initializePosition()
 
         logger.info('📷', 'ThirdPersonCamera avanzada inicializada', {
@@ -113,6 +119,153 @@ export default class ThirdPersonCamera {
 
         // Prevenir menú contextual
         this.canvas.addEventListener('contextmenu', (e) => e.preventDefault())
+    }
+
+    /**
+     * Configurar listeners táctiles para dispositivos móviles/tablets
+     * NUEVO: Soporte completo para touch, incluyendo pinch-to-zoom
+     */
+    setTouchListeners() {
+        if (!this.isTouchDevice) return
+
+        // Touch start - Iniciar interacción táctil
+        this.onTouchStart = (e) => this.handleTouchStart(e)
+
+        // Touch move - Rotar cámara o hacer zoom
+        this.onTouchMove = (e) => this.handleTouchMove(e)
+
+        // Touch end - Finalizar interacción
+        this.onTouchEnd = (e) => this.handleTouchEnd(e)
+
+        this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false })
+        this.canvas.addEventListener('touchmove', this.onTouchMove, { passive: false })
+        this.canvas.addEventListener('touchend', this.onTouchEnd, { passive: false })
+        this.canvas.addEventListener('touchcancel', this.onTouchEnd, { passive: false })
+
+        logger.info('📱', 'Controles táctiles de cámara activados para móvil/tablet')
+    }
+
+    /**
+     * Touch Start - Guardar posiciones iniciales
+     */
+    handleTouchStart(event) {
+        event.preventDefault()
+
+        // Guardar todos los toques activos
+        for (let i = 0; i < event.touches.length; i++) {
+            const touch = event.touches[i]
+            this.touches.set(touch.identifier, {
+                x: touch.clientX,
+                y: touch.clientY,
+                startX: touch.clientX,
+                startY: touch.clientY
+            })
+        }
+
+        // Si hay 2 toques, calcular distancia inicial para pinch-zoom
+        if (event.touches.length === 2) {
+            const touch1 = event.touches[0]
+            const touch2 = event.touches[1]
+            const dx = touch2.clientX - touch1.clientX
+            const dy = touch2.clientY - touch1.clientY
+            this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy)
+        }
+    }
+
+    /**
+     * Touch Move - Rotar cámara (1 dedo) o Zoom (2 dedos)
+     */
+    handleTouchMove(event) {
+        event.preventDefault()
+
+        if (!this.target) return
+
+        // ==================================================
+        // CASO 1: DOS DEDOS - PINCH TO ZOOM
+        // ==================================================
+        if (event.touches.length === 2) {
+            const touch1 = event.touches[0]
+            const touch2 = event.touches[1]
+
+            // Calcular distancia actual entre los dos dedos
+            const dx = touch2.clientX - touch1.clientX
+            const dy = touch2.clientY - touch1.clientY
+            const currentDistance = Math.sqrt(dx * dx + dy * dy)
+
+            if (this.lastTouchDistance > 0) {
+                // Calcular cambio en distancia
+                const distanceDelta = currentDistance - this.lastTouchDistance
+
+                // Aplicar zoom (sensibilidad ajustada para móvil)
+                const zoomSensitivity = this.config.touchZoomSpeed || 0.05
+                this.targetDistance -= distanceDelta * zoomSensitivity
+
+                // Limitar zoom
+                this.targetDistance = Math.max(
+                    this.config.minDistance,
+                    Math.min(this.config.maxDistance, this.targetDistance)
+                )
+            }
+
+            this.lastTouchDistance = currentDistance
+            return
+        }
+
+        // ==================================================
+        // CASO 2: UN DEDO - ROTAR CÁMARA
+        // ==================================================
+        if (event.touches.length === 1) {
+            const touch = event.touches[0]
+            const storedTouch = this.touches.get(touch.identifier)
+
+            if (storedTouch) {
+                // Calcular movimiento desde la última posición
+                const deltaX = touch.clientX - storedTouch.x
+                const deltaY = touch.clientY - storedTouch.y
+
+                // Aplicar rotación (sensibilidad ajustada para móvil)
+                const touchRotationSpeed = this.config.touchRotationSpeed || this.config.rotationSpeed * 1.5
+                const touchVerticalSpeed = this.config.touchVerticalRotationSpeed || this.config.verticalRotationSpeed * 1.5
+
+                this.horizontalAngle -= deltaX * touchRotationSpeed
+                this.verticalAngle -= deltaY * touchVerticalSpeed
+
+                // Limitar pitch
+                this.verticalAngle = Math.max(
+                    this.config.minPitch,
+                    Math.min(this.config.maxPitch, this.verticalAngle)
+                )
+
+                // Actualizar posición guardada
+                storedTouch.x = touch.clientX
+                storedTouch.y = touch.clientY
+            }
+        }
+    }
+
+    /**
+     * Touch End - Limpiar toques finalizados
+     */
+    handleTouchEnd(event) {
+        event.preventDefault()
+
+        // Remover toques que ya no están activos
+        const activeTouchIds = new Set()
+        for (let i = 0; i < event.touches.length; i++) {
+            activeTouchIds.add(event.touches[i].identifier)
+        }
+
+        // Limpiar toques que terminaron
+        for (const [id] of this.touches) {
+            if (!activeTouchIds.has(id)) {
+                this.touches.delete(id)
+            }
+        }
+
+        // Reset pinch distance si no hay 2 dedos
+        if (event.touches.length < 2) {
+            this.lastTouchDistance = 0
+        }
     }
 
     /**
@@ -371,10 +524,19 @@ export default class ThirdPersonCamera {
      * Limpiar listeners
      */
     destroy() {
+        // Remover listeners de mouse
         this.canvas.removeEventListener('mousedown', this.onMouseDown)
         this.canvas.removeEventListener('mouseup', this.onMouseUp)
         this.canvas.removeEventListener('mousemove', this.onMouseMove)
         this.canvas.removeEventListener('wheel', this.onWheel)
+
+        // Remover listeners táctiles
+        if (this.isTouchDevice) {
+            this.canvas.removeEventListener('touchstart', this.onTouchStart)
+            this.canvas.removeEventListener('touchmove', this.onTouchMove)
+            this.canvas.removeEventListener('touchend', this.onTouchEnd)
+            this.canvas.removeEventListener('touchcancel', this.onTouchEnd)
+        }
 
         logger.debug('ThirdPersonCamera destruida')
     }

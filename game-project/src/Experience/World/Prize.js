@@ -37,8 +37,8 @@ export default class Prize {
         bbox.getCenter(center);
         this.model.position.sub(center);
       } catch (error) {
-        console.warn("No se pudo centrar el modelo:", error);
         // Si falla, dejamos el modelo en su posición original
+        // No hacer nada - el modelo se renderiza en su posición original
       }
     }
 
@@ -61,12 +61,9 @@ export default class Prize {
       this.pivot.add(helper);
     } else {
       // Para el portal: OPTIMIZACIÓN EXTREMA
-      // Si el modelo ya está congelado (matrixAutoUpdate = false), 
-      // significa que World.js ya lo configuró, no hacer nada más
+      // El modelo ya está configurado en World.js
       this.pivot.userData.interactivo = true;
       this.pivot.userData.isPortal = true; // Marcador especial
-      
-      console.log(`✅ Portal creado - modelo congelado: ${!this.model.matrixAutoUpdate}`);
     }
 
     // 5. Añadir el pivot (que contiene el modelo) a la escena
