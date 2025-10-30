@@ -190,8 +190,7 @@ export default class World {
 
     if (
       this.thirdPersonCamera &&
-      this.experience.isThirdPerson &&
-      !this.experience.renderer.instance.xr.isPresenting
+      this.experience.isThirdPerson
     ) {
       this.thirdPersonCamera.update();
     }
@@ -204,9 +203,7 @@ export default class World {
     // Usa cache en lugar de scene.traverse() - 50-70% más rápido
     // ===================================
     if (FEATURES.PHYSICS_DISTANCE_OPTIMIZATION && this.levelObjects.length > 0) {
-      const playerPos = this.experience.renderer.instance.xr.isPresenting
-        ? this.experience.camera.instance.position
-        : this.robot?.body?.position;
+      const playerPos = this.robot?.body?.position;
 
       if (playerPos) {
         const optimizationRadius = GAME_CONFIG.gameplay.physicsOptimizationRadius;

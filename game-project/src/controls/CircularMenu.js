@@ -1,9 +1,8 @@
 import gsap from 'gsap'
 
 export default class CircularMenu {
-  constructor({ container, vrIntegration, onAudioToggle, onWalkMode, onFullscreen, onCancelGame }) {
+  constructor({ container, onAudioToggle, onWalkMode, onFullscreen, onCancelGame }) {
     this.container = container
-    this.vrIntegration = vrIntegration
     this.isOpen = false
     this.actionButtons = []
 
@@ -49,7 +48,6 @@ export default class CircularMenu {
       { icon: '🔊', title: 'Audio', onClick: onAudioToggle },
       { icon: '🚶', title: 'Modo Caminata', onClick: onWalkMode },
       { icon: '🖥️', title: 'Pantalla Completa', onClick: onFullscreen },
-      { icon: '🥽', title: 'Modo VR', onClick: () => this.vrIntegration.toggleVR() },
       { icon: '👨‍💻', title: 'Acerca de', onClick: () => this.showAboutModal() },
       { icon: '❌', title: 'Cancelar Juego', onClick: onCancelGame }
     ]
