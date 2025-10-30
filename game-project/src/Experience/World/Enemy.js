@@ -2,24 +2,11 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import Sound from './Sound.js';
 import FinalPrizeParticles from '../Utils/FinalPrizeParticles.js';
+import { GAME_CONFIG } from '../../config/GameConfig.js';
+import logger from '../../utils/Logger.js';
 
-// --- CONFIGURACIÓN CENTRALIZADA ---
-const CONFIG = {
-  modelScale: 0.6,
-  mass: 5,
-  sphereRadius: 0.5,
-  linearDamping: 0.01,
-  baseSpeed: 1.0,
-  chaseSpeed: 3.5,
-  chaseDistance: 5.0,
-  stopDistance: 1.5,
-  soundMaxDistance: 12.0,
-  animationFadeDuration: 0.2,
-  requiredAnimations: {
-    idle: 'idle01',
-    walking: 'dash',
-  }
-};
+// Usar configuración centralizada
+const CONFIG = GAME_CONFIG.enemy;
 
 function toCannonVec3(v) {
   // acepta THREE.Vector3, plain obj, o CANNON.Vec3
@@ -41,7 +28,7 @@ export default class Enemy {
 
     // Guard: normalizar position a THREE.Vector3 internamente
     if (!position) {
-      console.warn('Enemy created without initial position — using (0,0,0).');
+      logger.warn('Enemy created without initial position — using (0,0,0).');
       this.initialPosition = new THREE.Vector3(0, 0, 0);
     } else {
       this.initialPosition = toThreeVector(position);
@@ -56,10 +43,9 @@ export default class Enemy {
       this.setModel();
       this.setPhysics();
       this.setAnimation();
+      logger.info('👹', 'Enemigo inicializado', { position: this.initialPosition });
     } catch (error) {
-      // No destruir silenciosamente sin log detallado
-      console.error('❌ Error al inicializar el Enemigo:', error);
-      // Opcional: dejar el enemigo pero sin físicas/animación; aquí lo destruimos pero documentado
+      logger.error('Error al inicializar el Enemigo:', error);
       this.destroy();
     }
   }
@@ -91,7 +77,7 @@ export default class Enemy {
   setAnimation() {
     const resource = this.resources?.items?.enemyRedModel;
     if (!resource) {
-      console.warn('No hay resource.animations para Enemy.');
+      logger.warn('No hay resource.animations para Enemy.');
       this.animation = null;
       return;
     }
@@ -102,9 +88,9 @@ export default class Enemy {
       current: null
     };
 
-    // debug: listar nombres de animaciones disponibles
+    // Debug: listar nombres de animaciones disponibles
     if (Array.isArray(resource.animations)) {
-      console.debug('Enemy: animaciones disponibles ->', resource.animations.map(a => a.name));
+      logger.debug('Enemy: animaciones disponibles ->', resource.animations.map(a => a.name));
     }
 
     for (const [actionKey, animName] of Object.entries(CONFIG.requiredAnimations)) {
@@ -112,7 +98,7 @@ export default class Enemy {
       if (clip) {
         this.animation.actions[actionKey] = this.animation.mixer.clipAction(clip);
       } else {
-        console.warn(`⚠️ Animación de Enemigo "${animName}" no encontrada. actionKey=${actionKey}`);
+        logger.warn(`Animación de Enemigo "${animName}" no encontrada. actionKey=${actionKey}`);
       }
     }
 
@@ -120,10 +106,10 @@ export default class Enemy {
     if (!this.animation.actions.idle) {
       const anyClip = resource.animations?.[0];
       if (anyClip) {
-        console.warn('Asignando clip por defecto como idle.');
+        logger.warn('Asignando clip por defecto como idle.');
         this.animation.actions.idle = this.animation.mixer.clipAction(anyClip);
       } else {
-        console.warn('No hay clips disponibles para animaciones del enemigo.');
+        logger.warn('No hay clips disponibles para animaciones del enemigo.');
       }
     }
     if (!this.animation.actions.walking) {
@@ -150,7 +136,7 @@ export default class Enemy {
         newAction.fadeIn(CONFIG.animationFadeDuration).play();
         this.animation.actions.current = newAction;
       } catch (err) {
-        console.warn('Error al cambiar animación de enemigo:', err);
+        logger.warn('Error al cambiar animación de enemigo:', err);
       }
     };
   }
@@ -161,13 +147,13 @@ export default class Enemy {
     try {
       this.proximitySound.play();
     } catch (err) {
-      console.warn('No se pudo reproducir proximidad sound (tal vez audio no desbloqueado):', err);
+      logger.warn('No se pudo reproducir proximidad sound (tal vez audio no desbloqueado):', err);
     }
   }
 
   setPhysics() {
     if (!this.physics?.world) {
-      console.warn('No hay physics.world — el enemigo no tendrá física.');
+      logger.warn('No hay physics.world — el enemigo no tendrá física.');
       return;
     }
 
@@ -200,7 +186,7 @@ export default class Enemy {
           this.destroy();
         }
       } catch (err) {
-        console.error('Error manejando colisión de enemigo:', err);
+        logger.error('Error manejando colisión de enemigo:', err);
       }
     };
 

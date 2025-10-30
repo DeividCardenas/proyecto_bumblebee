@@ -1,28 +1,11 @@
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import Sound from './Sound.js'
+import { GAME_CONFIG } from '../../config/GameConfig.js'
+import logger from '../../utils/Logger.js'
 
-// --- CONFIGURACIÓN CENTRALIZADA ---
-const CONFIG = {
-    modelScale: 0.7,
-    mass: 2,
-    sphereRadius: 0.4,
-    linearDamping: 0.05,
-    angularDamping: 0.9,
-    moveForce: 260,
-    turnSpeed: 3.1,
-    maxSpeed: 18,
-    jumpForce: 3,
-    jumpForwardImpulse: 0.5,
-    animationFadeDuration: 0.2,
-    soundWalkVolume: 0.5,
-    soundJumpVolume: 0.8,
-    requiredAnimations: {
-        idle: 'idle01',
-        walking: 'dash',
-        death: 'emo_sad'
-    }
-};
+// Usar configuración centralizada
+const CONFIG = GAME_CONFIG.player;
 
 export default class Robot {
     constructor(experience) {
@@ -33,10 +16,13 @@ export default class Robot {
         this.physics = this.experience.physics
         this.keyboard = this.experience.keyboard
         this.debug = this.experience.debug
-        
+
         this.points = 0
         this.isInitialized = false
         this.isDead = false
+
+        // Array para trackear timeouts (limpieza en destroy)
+        this.timeouts = []
 
         // Vectores reutilizables para optimización
         this.moveDirection = new THREE.Vector3();
@@ -50,11 +36,12 @@ export default class Robot {
                 this.setPhysics()
                 this.setAnimation()
                 this.isInitialized = true
+                logger.info('🤖', 'Robot inicializado correctamente')
             } catch (error) {
-                console.error('❌ Error al inicializar el robot:', error)
+                logger.error('Error al inicializar el robot:', error)
             }
         } else {
-            console.error('❌ El modelo del robot no está cargado correctamente')
+            logger.error('El modelo del robot no está cargado correctamente')
         }
     }
 
@@ -88,13 +75,22 @@ export default class Robot {
         this.body.angularFactor.set(0, 0, 0) // No rotar por física, solo por control
         this.physics.world.addBody(this.body)
 
-        // Estabilización inicial
-        setTimeout(() => this.body.wakeUp(), 50)
+        // Estabilización inicial (con limpieza)
+        const timeoutId = setTimeout(() => {
+            if (this.body) this.body.wakeUp()
+            this.timeouts = this.timeouts.filter(id => id !== timeoutId)
+        }, CONFIG.stabilizationDelay)
+        this.timeouts.push(timeoutId)
     }
 
     setSounds() {
-        this.walkSound = new Sound('/sounds/robot/walking.mp3', { loop: true, volume: CONFIG.soundWalkVolume })
-        this.jumpSound = new Sound('/sounds/robot/jump.mp3', { volume: CONFIG.soundJumpVolume })
+        this.walkSound = new Sound('/sounds/robot/walking.mp3', {
+            loop: true,
+            volume: CONFIG.sounds.walkVolume
+        })
+        this.jumpSound = new Sound('/sounds/robot/jump.mp3', {
+            volume: CONFIG.sounds.jumpVolume
+        })
     }
 
     setAnimation() {
@@ -104,7 +100,7 @@ export default class Robot {
 
         const animations = this.resources.items.robotModel.animations;
         if (!animations || animations.length === 0) {
-            console.error('❌ El modelo del robot no tiene animaciones')
+            logger.error('El modelo del robot no tiene animaciones')
             return
         }
 
@@ -113,12 +109,12 @@ export default class Robot {
             if (clip) {
                 this.animation.actions[actionKey] = this.animation.mixer.clipAction(clip);
             } else {
-                console.warn(`⚠️ Animación "${animName}" no encontrada para la acción "${actionKey}"`);
+                logger.warn(`Animación "${animName}" no encontrada para la acción "${actionKey}"`);
             }
         }
 
         if (!this.animation.actions.idle) {
-            console.error('❌ No se encontró la animación idle necesaria')
+            logger.error('No se encontró la animación idle necesaria')
             return;
         }
 
@@ -223,7 +219,7 @@ export default class Robot {
 
     _checkBoundaries() {
         if (this.body.position.y > 10) {
-            console.warn('Robot fuera del escenario. Reubicando...');
+            logger.warn('Robot fuera del escenario. Reubicando...');
             this.body.position.set(0, 1.2, 0);
             this.body.velocity.set(0, 0, 0);
         }
@@ -291,7 +287,7 @@ export default class Robot {
                 this.group.position.y -= 0.5;
                 this.group.rotation.x = -Math.PI / 2;
             }
-            console.log('Robot ha muerto');
+            logger.info('💀', 'Robot ha muerto');
         };
 
         if (this.animation.actions.death) {
@@ -306,5 +302,38 @@ export default class Robot {
         } else {
             cleanup();
         }
+    }
+
+    /**
+     * Limpia recursos y cancela timeouts pendientes
+     * Importante para prevenir memory leaks
+     */
+    destroy() {
+        logger.debug('Limpiando recursos del robot...')
+
+        // Cancelar todos los timeouts pendientes
+        this.timeouts.forEach(id => clearTimeout(id))
+        this.timeouts = []
+
+        // Detener sonidos
+        this.walkSound?.stop()
+        this.jumpSound?.stop()
+
+        // Remover cuerpo físico
+        if (this.body && this.physics?.world?.bodies?.includes(this.body)) {
+            this.physics.world.removeBody(this.body)
+        }
+
+        // Remover de escena
+        if (this.group && this.scene) {
+            this.scene.remove(this.group)
+        }
+
+        // Limpiar animaciones
+        if (this.animation?.mixer) {
+            this.animation.mixer.stopAllAction()
+        }
+
+        logger.debug('Robot destruido correctamente')
     }
 }

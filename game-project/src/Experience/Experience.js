@@ -17,6 +17,9 @@ import cannonDebugger from 'cannon-es-debugger'
 import CircularMenu from '../controls/CircularMenu.js'
 import { Howler } from 'howler'
 import SocketManager from '../network/SocketManager.js'
+import { FEATURES } from '../config/FeatureFlags.js'
+import { GAME_CONFIG } from '../config/GameConfig.js'
+import logger from '../utils/Logger.js'
 
 let instance = null
 
@@ -38,10 +41,17 @@ export default class Experience {
     this.time = new Time()
     this.scene = new THREE.Scene()
     this.physics = new Physics()
-    this.debugger = cannonDebugger(this.scene, this.physics.world, { color: 0x00ff00 })
+
+    // Debugger de física (solo si está habilitado)
+    if (FEATURES.PHYSICS_DEBUG) {
+      this.debugger = cannonDebugger(this.scene, this.physics.world, { color: 0x00ff00 })
+    }
+
     this.keyboard = new KeyboardControls()
 
     this.scene.background = new THREE.Color('#87ceeb')
+
+    logger.info('🎮', 'Experience inicializada')
 
     // Recursos
     this.resources = new Resources(sources)
@@ -63,7 +73,7 @@ export default class Experience {
       const overlay = document.querySelector('.loader-overlay')
       if (overlay) {
         overlay.classList.add('fade-out')
-        setTimeout(() => overlay.remove(), 1000)
+        setTimeout(() => overlay.remove(), GAME_CONFIG.ui.fadeOutDuration)
       }
     })
 
@@ -79,8 +89,11 @@ export default class Experience {
     this.scene.add(this.vrDolly)
 
 
-  // Socket
-  //this.socketManager = new SocketManager(this)
+    // Sistema multijugador (controlado por feature flag)
+    if (FEATURES.MULTIPLAYER_ENABLED) {
+      this.socketManager = new SocketManager(this)
+      logger.info('🔌', 'SocketManager inicializado')
+    }
 
 
     // Modal y VR
@@ -221,9 +234,15 @@ export default class Experience {
     this.renderer.update()
     this.physics.update(delta)
 
-    this.socketManager?.update()
-    //linea para activar el debugger
-    // if (this.debugger) this.debugger.update()
+    // Actualizar multiplayer si está habilitado
+    if (FEATURES.MULTIPLAYER_ENABLED) {
+      this.socketManager?.update()
+    }
+
+    // Actualizar debugger de física si está habilitado
+    if (FEATURES.PHYSICS_DEBUG && this.debugger) {
+      this.debugger.update()
+    }
   }
 
   adjustCameraForVR() {
@@ -257,8 +276,8 @@ export default class Experience {
   }
 
   startGame() {
-    console.log('🎮 Juego iniciado')
-    this.isThirdPerson = true // ⬅️ asegurar el modo
+    logger.info('🎮', 'Juego iniciado')
+    this.isThirdPerson = true // Asegurar modo tercera persona
     this.tracker.start()
     if (this.menu && this.menu.toggleButton && this.menu.toggleButton.style) {
       this.menu.toggleButton.style.display = 'block'
@@ -266,81 +285,95 @@ export default class Experience {
     if (this.world) {
       this.world.gameStarted = true
     }
-    console.log('🎮 Iniciando partida...')
   }
 
 
 
-  resetGame() {
-    console.log('♻️ Reiniciando juego...')
-    // Notificar desconexión al servidor
-    this.socketManager?.socket?.disconnect()
+  /**
+   * Resetea el estado común del juego
+   * Método base reutilizado por resetGame() y resetGameToFirstLevel()
+   * @private
+   */
+  _resetGameState() {
+    // Limpiar enemigos
+    if (Array.isArray(this.world?.enemies)) {
+      this.world.enemies.forEach(e => e?.destroy?.())
+      this.world.enemies = []
+    }
 
-    // Limpieza explícita del HUD
+    // Resetear puntos
+    if (this.world) {
+      this.world.points = 0
+      this.world.defeatTriggered = false
+      if (this.world.robot) this.world.robot.points = 0
+      if (this.world.loader) this.world.loader.prizes = []
+      this.world.finalPrizeActivated = false
+    }
+
+    // Limpiar tracker
+    if (this.tracker) {
+      this.tracker.destroy()
+    }
+  }
+
+  /**
+   * Reinicia completamente el juego (nueva instancia)
+   * Se usa cuando el jugador quiere salir y empezar de cero
+   */
+  resetGame() {
+    logger.info('♻️', 'Reiniciando juego completamente...')
+
+    // Notificar desconexión al servidor (si está habilitado)
+    if (FEATURES.MULTIPLAYER_ENABLED) {
+      this.socketManager?.socket?.disconnect()
+    }
+
+    // Limpieza de UI
     if (this.menu) this.menu.destroy()
 
-    // Limpieza del temporizador viejo
-    if (this.tracker) this.tracker.destroy()
-
-    //limpiar fantasmas de robot antiguos
+    // Limpiar socketManager si existe
     if (this.socketManager) {
       this.socketManager.destroy()
     }
 
-    // Destruir todo
+    // Destruir instancia actual
     this.destroy()
-
-    // Reiniciar instancia
     instance = null
-    const newExperience = new Experience(this.canvas)
 
-    // Forzar modo tercera persona
+    // Crear nueva instancia
+    const newExperience = new Experience(this.canvas)
     newExperience.isThirdPerson = true
 
-    // Limpiar botón cancelar
+    // Limpiar UI residual
     const cancelBtn = document.getElementById('cancel-button')
     if (cancelBtn) cancelBtn.remove()
 
-
-    // Esconder botones en la nueva instancia:
     newExperience.tracker?.hideGameButtons?.()
+
+    logger.info('✅', 'Nueva instancia de juego creada')
   }
 
-
+  /**
+   * Reinicia al nivel 1 sin recrear la instancia
+   * Se usa cuando el jugador muere y quiere reintentar
+   */
   resetGameToFirstLevel() {
-    console.log('♻️ Reiniciando al nivel');
+    logger.info('♻️', 'Reiniciando al nivel 1...')
 
-    // 💀 Destruir enemigo previo si existe
-    if (Array.isArray(this.world.enemies)) {
-      this.world.enemies.forEach(e => e?.destroy?.())
-      this.world.enemies = []
-    } else {
-      this.world.enemy?.destroy()
-      this.world.enemy = null
-    }
+    // Usar método base para limpiar estado común
+    this._resetGameState()
 
-    // Resetear variables de World
-    this.world.points = 0;
-    this.world.robot.points = 0;
-    this.world.loader.prizes = [];
-    this.world.defeatTriggered = false
+    // Resetear nivel
+    this.world.levelManager.currentLevel = 1
 
-    // Resetear nivel actual
-    this.world.levelManager.currentLevel = 1;
+    // Limpiar y recargar
+    this.world.clearCurrentScene()
+    this.world.loadLevel(1)
 
-    // Limpiar la escena
-    this.world.clearCurrentScene();
+    // Reiniciar tracker
+    this.tracker = new GameTracker({ modal: this.modal, menu: this.menu })
+    this.tracker.start()
 
-    // Cargar nivel 1 de nuevo
-    this.world.loadLevel(1);
-
-    // Reiniciar el seguimiento de tiempo
-    this.tracker.destroy(); // Detener el loop anterior
-    this.tracker = new GameTracker({ modal: this.modal, menu: this.menu });
-    this.tracker.start();
-
-    console.log('✅ Juego reiniciado en nivel 1.');
+    logger.info('✅', 'Juego reiniciado en nivel 1')
   }
-
-
 }

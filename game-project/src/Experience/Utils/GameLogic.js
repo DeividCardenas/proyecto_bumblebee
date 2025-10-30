@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { GAME_CONFIG } from '../../config/GameConfig.js';
+import logger from '../../utils/Logger.js';
+import { FEATURES } from '../../config/FeatureFlags.js';
 
 export default class GameLogic {
   constructor({ experience, player, levelManager, sounds }) {
@@ -9,11 +12,25 @@ export default class GameLogic {
 
     this.defeatTriggered = false;
 
-    // Lógica del delay que tenías en World
+    // Array para trackear timeouts (limpieza en destroy)
+    this.timeouts = [];
+
+    // Contador para debouncing de colisiones (optimización de rendimiento)
+    this.collisionCheckFrame = 0;
+    this.collisionCheckInterval = FEATURES.COLLISION_DEBOUNCING
+      ? GAME_CONFIG.gameplay.collisionCheckInterval
+      : 1; // Si debouncing desactivado, revisar cada frame
+
+    // Delay antes de poder recoger premios (evita recolección inmediata al spawn)
     this.allowPrizePickup = false;
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       this.allowPrizePickup = true;
-    }, 2000);
+      this.timeouts = this.timeouts.filter(id => id !== timeoutId);
+      logger.debug('Prize pickup habilitado');
+    }, GAME_CONFIG.gameplay.prizePickupDelay);
+    this.timeouts.push(timeoutId);
+
+    logger.info('🎮', 'GameLogic inicializado');
   }
 
   /**
@@ -46,7 +63,8 @@ export default class GameLogic {
         return Math.min(min, d);
       }, Infinity) ?? Infinity;
 
-    if (distToClosest < 1.0) {
+    const defeatDistance = GAME_CONFIG.gameplay.enemyDefeatDistance;
+    if (distToClosest < defeatDistance) {
       this.defeatTriggered = true; // ¡Importante! Seteamos el flag
 
       if (window.userInteracted && this.sounds.lose) {
@@ -58,9 +76,11 @@ export default class GameLogic {
       const enemyMesh = firstEnemy?.model || firstEnemy?.group;
       if (enemyMesh) {
         enemyMesh.scale.set(6, 6, 6);
-        setTimeout(() => {
-          enemyMesh.scale.set(6, 6, 6);
+        const timeoutId = setTimeout(() => {
+          if (enemyMesh) enemyMesh.scale.set(6, 6, 6);
+          this.timeouts = this.timeouts.filter(id => id !== timeoutId);
         }, 500);
+        this.timeouts.push(timeoutId);
       }
 
       // Mostrar modal de derrota
@@ -83,9 +103,15 @@ export default class GameLogic {
 
   /**
    * Revisa si el jugador está recolectando un premio.
+   * Optimizado con debouncing para mejorar rendimiento.
    */
   checkPrizeCollision(prizes) {
     if (!this.allowPrizePickup || !prizes || prizes.length === 0) return;
+
+    // Debouncing: solo revisar cada N frames para optimizar rendimiento
+    this.collisionCheckFrame++;
+    if (this.collisionCheckFrame < this.collisionCheckInterval) return;
+    this.collisionCheckFrame = 0;
 
     // Determinar la posición del jugador (VR o PC)
     let playerPos = null;
@@ -98,32 +124,26 @@ export default class GameLogic {
     }
 
     const speed = this.player?.body?.velocity?.length?.() || 0;
-    const hasMoved = speed > 0.5;
+    const minSpeed = GAME_CONFIG.gameplay.minMovementSpeed;
+    const hasMoved = speed > minSpeed;
 
     if (!hasMoved) return; // Optimización: si no se mueve, no puede recolectar
 
     for (const prize of prizes) {
-      // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
-      // Ahora también comprueba si el pivote del premio es visible.
-      // Si no lo es (como el final_prize al inicio), lo ignora.
+      // Solo revisar premios visibles y no recolectados
       if (!prize.pivot || prize.collected || !prize.pivot.visible) continue;
 
       const dist = prize.pivot.position.distanceTo(playerPos);
 
       // --- LÓGICA DE RECOLECCIÓN ---
-      if (dist < 1.2) {
+      const collectionDistance = GAME_CONFIG.gameplay.prizeCollectionDistance;
+      if (dist < collectionDistance) {
         prize.collect(); // El premio se auto-elimina y suena (si tiene sonido)
-        // prize.collected = true; // 'collect()' ya debería setear esto
 
         if (prize.role === "default") {
           this.levelManager.onPrizeCollected("default");
         } else if (prize.role === "final_prize") {
           this.handleFinalPrizeWin();
-        }
-
-        // Sonido de moneda (manejado por Prize.js, pero lo dejamos por si acaso)
-        if (window.userInteracted && this.sounds.coin) {
-          // this.sounds.coin.play(); // Prize.js ya lo hace, pero si falla, descomenta
         }
 
         // Actualizar la UI
@@ -143,10 +163,12 @@ export default class GameLogic {
   handleFinalPrizeWin() {
     if (this.levelManager.currentLevel < this.levelManager.totalLevels) {
       // Aún hay más niveles
+      logger.info('🎯', `Nivel ${this.levelManager.currentLevel} completado!`);
       this.levelManager.nextLevel();
     } else {
       // Es el último nivel, ¡Juego terminado!
-      console.log("Final prize collected! Game Over.");
+      logger.info('🏆', 'Juego completado! Todos los niveles superados.');
+
       const elapsed = this.experience.tracker.stop();
       this.experience.tracker.saveTime(elapsed);
       this.experience.tracker.showEndGameModal(elapsed);
@@ -164,10 +186,32 @@ export default class GameLogic {
    * Resetea el estado de la lógica para un nuevo nivel.
    */
   reset() {
+    logger.debug('Reseteando GameLogic...');
+
     this.defeatTriggered = false;
     this.allowPrizePickup = false;
-    setTimeout(() => {
+    this.collisionCheckFrame = 0;
+
+    // Limpiar timeouts anteriores
+    this.timeouts.forEach(id => clearTimeout(id));
+    this.timeouts = [];
+
+    // Crear nuevo timeout para prize pickup
+    const timeoutId = setTimeout(() => {
       this.allowPrizePickup = true;
-    }, 2000);
+      this.timeouts = this.timeouts.filter(id => id !== timeoutId);
+      logger.debug('Prize pickup habilitado después de reset');
+    }, GAME_CONFIG.gameplay.prizePickupDelay);
+    this.timeouts.push(timeoutId);
+  }
+
+  /**
+   * Limpia recursos y cancela timeouts pendientes
+   * Importante para prevenir memory leaks
+   */
+  destroy() {
+    logger.debug('Limpiando GameLogic...');
+    this.timeouts.forEach(id => clearTimeout(id));
+    this.timeouts = [];
   }
 }

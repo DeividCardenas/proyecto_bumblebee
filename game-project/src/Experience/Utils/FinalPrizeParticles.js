@@ -1,5 +1,7 @@
 // FinalPrizeParticles.js (versión optimizada con THREE.Points)
 import * as THREE from 'three'
+import { GAME_CONFIG } from '../../config/GameConfig.js'
+import logger from '../../utils/Logger.js'
 
 export default class FinalPrizeParticles {
   constructor({ scene, targetPosition, sourcePosition, experience }) {
@@ -7,7 +9,10 @@ export default class FinalPrizeParticles {
     this.experience = experience
     this.clock = new THREE.Clock()
 
-    this.count = 60 
+    // Para trackear timeouts
+    this.timeoutId = null
+
+    this.count = 60
     this.angles = new Float32Array(this.count)
     this.radii = new Float32Array(this.count)
     this.positions = new Float32Array(this.count * 3)
@@ -44,8 +49,14 @@ export default class FinalPrizeParticles {
     this.target = targetPosition.clone()
     this.experience.time.on('tick', this.update)
 
-    // Eliminar luego de unos segundos
-    setTimeout(() => this.dispose(), 8000)
+    // Eliminar luego de unos segundos (configurado en GameConfig)
+    const duration = GAME_CONFIG.gameplay.portalParticlesDuration
+    this.timeoutId = setTimeout(() => {
+      this.dispose()
+      logger.debug('Partículas del portal auto-eliminadas después de', duration, 'ms')
+    }, duration)
+
+    logger.debug('Partículas del portal final creadas')
   }
 
   update = () => {
@@ -65,10 +76,34 @@ export default class FinalPrizeParticles {
     this.geometry.attributes.position.needsUpdate = true
   }
 
+  /**
+   * Limpia recursos y cancela timeouts
+   */
   dispose() {
-    this.experience.time.off('tick', this.update)
-    this.scene.remove(this.points)
-    this.geometry.dispose()
-    this.points.material.dispose()
+    // Cancelar timeout si aún no se ejecutó
+    if (this.timeoutId !== null) {
+      clearTimeout(this.timeoutId)
+      this.timeoutId = null
+    }
+
+    // Limpiar event listener
+    if (this.experience?.time) {
+      this.experience.time.off('tick', this.update)
+    }
+
+    // Limpiar geometría y material
+    if (this.points) {
+      this.scene.remove(this.points)
+    }
+
+    if (this.geometry) {
+      this.geometry.dispose()
+    }
+
+    if (this.points?.material) {
+      this.points.material.dispose()
+    }
+
+    logger.debug('Partículas del portal eliminadas')
   }
 }
