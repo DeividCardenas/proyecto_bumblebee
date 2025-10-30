@@ -353,7 +353,7 @@ export default class World {
 
 showFinalPrize() {
     if (this.finalPrizeActivated) return;
-    logger.info('🔥', 'Activando showFinalPrize() para crear el Portal...');
+    logger.info('🔥', 'Creando Portal SIMPLE (sin animaciones ni efectos)...');
 
     // 1. Obtener el recurso GLTF del portal
     const portalResource = this.resources.items.Portal;
@@ -362,7 +362,7 @@ showFinalPrize() {
       return;
     }
 
-    // 2. Clonar el modelo del portal de forma LIGERA (sin animaciones)
+    // 2. Clonar el modelo del portal (SIN ANIMACIONES)
     const portalModel = portalResource.scene.clone();
 
     // Validar que el modelo tiene contenido
@@ -371,103 +371,129 @@ showFinalPrize() {
       return;
     }
 
-    // Log para debugging: contar objetos en el portal
-    let meshCount = 0;
-    let boneCount = 0;
-    portalModel.traverse((child) => {
-      if (child.isMesh) meshCount++;
-      if (child.isBone) boneCount++;
-    });
-    logger.info('📊', `Portal simplificado cargado: ${meshCount} meshes, ${boneCount} bones`);
-
-    // 3. Posición del portal (más cerca y visible)
+    // 3. Posición del portal (visible desde spawn)
     const portalPosition = new THREE.Vector3(0, 1.5, -15);
 
-    // 4. OPTIMIZACIÓN: Configurar el portal para máximo rendimiento
-    // El portal simplificado no tiene bones, pero aún así lo optimizamos
+    // 4. SIMPLIFICACIÓN TOTAL: Eliminar TODO lo innecesario
     portalModel.traverse((child) => {
+      // Hacer visible
       child.visible = true;
+
+      // Marcar para ignorar cámara
       child.userData.ignoreCamera = true;
-      
-      // Deshabilitar frustum culling para evitar cálculos innecesarios
-      child.frustumCulled = false;
-      
-      // Si tiene skeleton o es un bone, congelarlo (por si acaso)
-      if (child.isSkinnedMesh && child.skeleton) {
-        child.skeleton = null;
-        child.geometry.computeBoundingBox();
+
+      // ========================================
+      // CRÍTICO: ELIMINAR ANIMACIONES Y BONES
+      // ========================================
+
+      // Si es un SkinnedMesh (tiene animaciones/bones) → CONVERTIRLO A MESH NORMAL
+      if (child.isSkinnedMesh) {
+        // Destruir skeleton completamente
+        if (child.skeleton) {
+          child.skeleton.dispose();
+          child.skeleton = null;
+        }
+
+        // Convertir a Mesh normal (sin animación)
+        child.type = 'Mesh';
+        child.isSkinnedMesh = false;
+
+        logger.debug('🔧 SkinnedMesh convertido a Mesh estático');
       }
-      
+
+      // Destruir bones completamente (no los necesitamos)
       if (child.isBone) {
-        child.matrixAutoUpdate = false;
-        child.updateMatrix();
+        // Remover el bone del parent
+        if (child.parent) {
+          child.parent.remove(child);
+        }
+        return;
       }
-      
-      // Para meshes normales, también optimizar
+
+      // Para meshes normales: congelar transformaciones
       if (child.isMesh) {
-        // Congelar transformaciones locales para evitar recálculos
+        // Congelar para evitar recálculos
         child.matrixAutoUpdate = false;
         child.updateMatrix();
-        
-        // Pre-calcular bounding box una vez
+
+        // Forzar frustum culling (para que no renderice fuera de vista)
+        child.frustumCulled = true;
+
+        // Computar bounding box una vez
         if (child.geometry) {
           child.geometry.computeBoundingBox();
+          child.geometry.computeBoundingSphere();
+        }
+
+        // ========================================
+        // ELIMINAR MATERIALES CON ANIMACIONES
+        // ========================================
+        if (child.material) {
+          // Si el material tiene maps animados, congelarlos
+          if (child.material.map) {
+            child.material.map.needsUpdate = false;
+          }
+
+          // Desactivar cualquier shader animado o emisivo fuerte
+          if (child.material.emissive) {
+            child.material.emissive.set(0x000000); // Sin emisión
+          }
+
+          if (child.material.emissiveIntensity) {
+            child.material.emissiveIntensity = 0; // Sin brillo
+          }
         }
       }
     });
 
+    // Limpiar children que son bones (después del traverse)
+    portalModel.children = portalModel.children.filter(child => !child.isBone);
+
     // 5. Escalar el portal para mejor visibilidad
     portalModel.scale.set(1.5, 1.5, 1.5);
-    
-    // CRÍTICO: Congelar transformaciones del modelo completo
+
+    // 6. Congelar transformaciones del modelo completo
     portalModel.matrixAutoUpdate = false;
     portalModel.updateMatrix();
-    
-    // 6. Crear la instancia de Prize (OPTIMIZADO: sin centrado costoso)
+
+    logger.info('✅', 'Portal simplificado: SIN bones, SIN animaciones, SIN efectos');
+
+    // 7. Crear la instancia de Prize (SIMPLE)
     const finalPortalPrize = new Prize({
       model: portalModel,
       position: portalPosition,
       scene: this.scene,
-      role: "final_prize", // Esto evitará el centrado y traverse costoso
+      role: "final_prize",
     });
 
-    // 7. Hacer visible el premio y configurar userData
+    // 8. Hacer visible y configurar userData
     finalPortalPrize.pivot.visible = true;
     finalPortalPrize.pivot.userData.ignoreCamera = true;
-    
-    // CRÍTICO: Congelar el pivot también para evitar actualizaciones
+
+    // 9. Congelar el pivot también
     finalPortalPrize.pivot.matrixAutoUpdate = false;
     finalPortalPrize.pivot.position.copy(portalPosition);
     finalPortalPrize.pivot.updateMatrix();
 
-    // 8. Añadir el premio al array que GameLogic revisa
+    // 10. Añadir al array de premios
     if (!this.loader || !this.loader.prizes) {
        logger.error("this.loader.prizes no está listo.");
        return;
     }
-    
-    // Filtrar premios finales anteriores (no debería haber, pero por seguridad)
+
     this.loader.prizes = this.loader.prizes.filter(p => p.role !== 'final_prize');
     this.loader.prizes.push(finalPortalPrize);
-    
+
     this.finalPrizeActivated = true;
 
-    // 9. Activar el FXManager (Faro de luz)
-    const sourcePos = this.experience.renderer.instance.xr.isPresenting
-      ? this.experience.vrDolly?.position ?? this.experience.camera.instance.position
-      : this.robot.body.position;
+    // ========================================
+    // SIN EFECTOS VISUALES NI SONIDOS
+    // ========================================
+    // NO activar FXManager (faro de luz) - DESACTIVADO
+    // NO reproducir sonido - DESACTIVADO
 
-    this.fxManager.showFinalPrizeBeacon(
-      finalPortalPrize.pivot.position, 
-      sourcePos
-    );
-
-    // 10. Sonido del portal
-    if (window.userInteracted && this.portalSound) {
-      this.portalSound.play();
-    }
-
-    logger.info('✅', `Portal (final_prize) creado en (${portalPosition.x}, ${portalPosition.y}, ${portalPosition.z}) con radio de colección ${GAME_CONFIG.gameplay.portalCollectionDistance}`);
+    logger.info('✅', `Portal SIMPLE creado en (${portalPosition.x}, ${portalPosition.y}, ${portalPosition.z})`);
+    logger.info('ℹ️', 'Portal sin animaciones, sin sonidos, sin efectos - MODO BÁSICO');
   }
 
   clearCurrentScene() {
