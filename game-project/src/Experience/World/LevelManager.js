@@ -1,42 +1,47 @@
+import { GAME_CONFIG } from '../../config/GameConfig.js';
+import logger from '../../utils/Logger.js';
+
 export default class LevelManager {
   constructor(experience) {
     this.experience = experience;
     this.currentLevel = 1; // Inicias en el nivel 1
-    this.totalLevels = 3; // Total de niveles
-    // --- Nuevas propiedades ---
+    this.totalLevels = GAME_CONFIG.gameplay.totalLevels; // Total de niveles desde config
+
+    // Premios por nivel
     this.defaultPrizesToCollect = 0; // Total de premios 'default' en el nivel
     this.defaultPrizesCollected = 0; // Contador de premios 'default' recogidos
+
+    // Array para trackear timeouts
+    this.timeouts = [];
+
+    logger.info('🎯', `LevelManager inicializado (${this.totalLevels} niveles)`);
   }
+
   /**
    * Registra cuántos premios 'default' hay en el nivel actual.
-   * Debe ser llamado por tu clase World (o la que cargue los premios)
-   * después de crear todas las instancias de Prize.
+   * Debe ser llamado por World después de crear todas las instancias de Prize.
    * @param {number} defaultPrizeCount - El número de premios con role='default'.
    */
-
   setLevelPrizeCount(defaultPrizeCount) {
     this.defaultPrizesToCollect = defaultPrizeCount;
     this.defaultPrizesCollected = 0; // Resetea el contador
-    console.log(
-      `Level ${this.currentLevel} loaded. Prizes to collect: ${this.defaultPrizesToCollect}`
-    );
+
+    logger.info('💰', `Nivel ${this.currentLevel} cargado. Premios a recoger: ${this.defaultPrizesToCollect}`);
   }
+
   /**
    * Método para ser llamado cuando se recoge un premio.
-   * La lógica de colisión (en Robot.js o World.js) debe llamar a este método
-   * y pasarle el 'role' del premio que fue recogido.
    * @param {string} role - El 'role' del premio recogido ('default' o 'final_prize').
    */
-
   onPrizeCollected(role) {
     if (role === "default") {
       this.defaultPrizesCollected++;
-      console.log(
-        `Default prize collected! ${this.defaultPrizesCollected} / ${this.defaultPrizesToCollect}`
-      ); // Si se recogieron todos los premios 'default'
 
+      logger.debug(`Premio recogido! ${this.defaultPrizesCollected} / ${this.defaultPrizesToCollect}`);
+
+      // Si se recogieron todos los premios 'default'
       if (this.defaultPrizesCollected >= this.defaultPrizesToCollect) {
-        console.log("All default prizes collected! Showing final prize."); // Asumimos que 'world' tiene un método para mostrar el premio final // (El premio final ya existe pero está invisible, según tu Prize.js)
+        logger.info('✅', '¡Todos los premios recogidos! Mostrando premio final...');
 
         if (
           this.experience.world &&
@@ -44,51 +49,90 @@ export default class LevelManager {
         ) {
           this.experience.world.showFinalPrize();
         } else {
-          console.warn("world.showFinalPrize() not found!");
+          logger.warn("world.showFinalPrize() not found!");
         }
       }
     } else if (role === "final_prize") {
       // Si se recogió el premio final, pasa al siguiente nivel
-      console.log("Final prize collected! Advancing to next level.");
+      logger.info('🏆', 'Premio final recogido! Avanzando al siguiente nivel...');
       this.nextLevel();
     }
   }
 
+  /**
+   * Avanza al siguiente nivel
+   */
   nextLevel() {
     if (this.currentLevel < this.totalLevels) {
-      this.currentLevel++; // Resetea los contadores para el nuevo nivel
+      this.currentLevel++;
 
+      // Resetea los contadores para el nuevo nivel
       this.defaultPrizesCollected = 0;
       this.defaultPrizesToCollect = 0; // Se establecerá de nuevo con setLevelPrizeCount
 
       this.experience.world.clearCurrentScene();
-      this.experience.world.loadLevel(this.currentLevel); // Espera breve para que el nivel se cargue y luego reubicar al robot
+      this.experience.world.loadLevel(this.currentLevel);
 
-      setTimeout(() => {
-        // Reubicar de forma segura al punto de spawn fijo usado en todos los niveles
-        this.experience.world.resetRobotPosition({ x: 0, y: 0, z: 0 });
-      }, 1000);
+      // Espera breve para que el nivel se cargue y luego reubicar al robot
+      const spawnPoint = GAME_CONFIG.gameplay.defaultSpawnPoint;
+      const levelTransitionDelay = GAME_CONFIG.gameplay.levelTransitionDelay;
+
+      const timeoutId = setTimeout(() => {
+        this.experience.world.resetRobotPosition(spawnPoint);
+        this.timeouts = this.timeouts.filter(id => id !== timeoutId);
+        logger.debug(`Robot reposicionado en spawn point del nivel ${this.currentLevel}`);
+      }, levelTransitionDelay);
+
+      this.timeouts.push(timeoutId);
     } else {
-      console.log("All levels completed! Game Over."); // Aquí puedes manejar la lógica de fin de juego (ej. mostrar pantalla de victoria)
+      logger.info('🎊', '¡Todos los niveles completados! Game Over.');
     }
   }
 
+  /**
+   * Resetea al nivel 1
+   */
   resetLevel() {
-    this.currentLevel = 1; // Resetea contadores
+    logger.info('🔄', 'Reseteando al nivel 1...');
 
+    this.currentLevel = 1;
+
+    // Resetea contadores
     this.defaultPrizesCollected = 0;
     this.defaultPrizesToCollect = 0; // Se establecerá de nuevo con setLevelPrizeCount
 
-    this.experience.world.loadLevel(this.currentLevel); // (Opcional) resetear también la posición del robot aquí
+    this.experience.world.loadLevel(this.currentLevel);
 
-    setTimeout(() => {
-      // Posición inicial fija para todos los niveles (centro del mapa)
-      this.experience.world.resetRobotPosition({ x: 0, y: 0, z: 0 });
-    }, 1000);
+    // Limpiar timeouts anteriores
+    this.timeouts.forEach(id => clearTimeout(id));
+    this.timeouts = [];
+
+    // Reposicionar robot
+    const spawnPoint = GAME_CONFIG.gameplay.defaultSpawnPoint;
+    const levelTransitionDelay = GAME_CONFIG.gameplay.levelTransitionDelay;
+
+    const timeoutId = setTimeout(() => {
+      this.experience.world.resetRobotPosition(spawnPoint);
+      this.timeouts = this.timeouts.filter(id => id !== timeoutId);
+    }, levelTransitionDelay);
+
+    this.timeouts.push(timeoutId);
   }
 
+  /**
+   * Obtiene el objetivo de puntos del nivel actual
+   * @returns {number}
+   */
   getCurrentLevelTargetPoints() {
-    // Esta función ahora puede usar el contador de premios
-    return this.defaultPrizesToCollect; // return this.pointsToComplete?.[this.currentLevel] || 2 // Tu lógica original
+    return this.defaultPrizesToCollect;
+  }
+
+  /**
+   * Limpia recursos y cancela timeouts pendientes
+   */
+  destroy() {
+    logger.debug('Limpiando LevelManager...');
+    this.timeouts.forEach(id => clearTimeout(id));
+    this.timeouts = [];
   }
 }
