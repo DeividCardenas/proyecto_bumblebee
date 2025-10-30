@@ -61,15 +61,23 @@ export default class Prize {
 
   /**
    * ACTUALIZADO: El método update ahora maneja ambos casos.
+   * CRÍTICO: El portal (final_prize) NO debe rotar - permanece completamente estático
    */
   update(delta) {
     if (this.collected) return;
 
+    // ¡IMPORTANTE! El portal final NO debe rotar ni animarse
+    // Solo las monedas (role === "default") rotan
+    if (this.role === "final_prize") {
+      // Portal completamente estático - no hacer nada
+      return;
+    }
+
     if (this.mixer) {
-      // Si tenemos un mixer (es el portal animado), actualizamos el mixer
+      // Si tenemos un mixer (para animaciones), actualizamos el mixer
       this.mixer.update(delta);
     } else {
-      // Si no (es una moneda), solo giramos el pivot
+      // Si no (es una moneda normal), solo giramos el pivot
       this.pivot.rotation.y += delta * 1.5;
     }
   }
