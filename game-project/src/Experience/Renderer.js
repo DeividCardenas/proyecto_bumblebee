@@ -12,17 +12,21 @@ export default class Renderer {
     }
 
     setInstance() {
+        // Detectar dispositivo móvil para optimizar rendimiento
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
         this.instance = new THREE.WebGLRenderer({
             canvas: this.canvas,
-            antialias: true
+            antialias: !isMobile, // Desactivar antialiasing en móviles para mejor rendimiento
+            powerPreference: isMobile ? 'low-power' : 'high-performance'
         })
-       // this.instance.toneMapping = THREE.CineonToneMapping
-       // this.instance.toneMappingExposure = 1.75
+
         this.instance.shadowMap.enabled = true
-       // this.instance.shadowMap.type = THREE.PCFSoftShadowMap
-        //this.instance.setClearColor('#211d20')
         this.instance.setSize(this.sizes.width, this.sizes.height)
-        this.instance.setPixelRatio(this.sizes.pixelRatio)
+
+        // Limitar pixelRatio en móviles para mejor rendimiento
+        const maxPixelRatio = isMobile ? 2 : this.sizes.pixelRatio
+        this.instance.setPixelRatio(Math.min(maxPixelRatio, this.sizes.pixelRatio))
 
         this.instance.outputEncoding = THREE.sRGBEncoding;
         this.instance.toneMapping = THREE.ACESFilmicToneMapping;
