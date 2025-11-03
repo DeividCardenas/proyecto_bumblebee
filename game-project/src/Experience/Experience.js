@@ -16,6 +16,7 @@ import cannonDebugger from 'cannon-es-debugger'
 import CircularMenu from '../controls/CircularMenu.js'
 import { Howler } from 'howler'
 import SocketManager from '../network/SocketManager.js'
+import LoginManager from '../auth/LoginManager.js'
 import { FEATURES } from '../config/FeatureFlags.js'
 import { GAME_CONFIG } from '../config/GameConfig.js'
 import logger from '../utils/Logger.js'
@@ -55,11 +56,23 @@ export default class Experience {
     // Recursos
     this.resources = new Resources(sources)
 
-    this.resources.on('ready', () => {
-      // Mostrar modal solo cuando los recursos estén listos
+    this.resources.on('ready', async () => {
+      // Ocultar precarga si existe
+      const overlay = document.querySelector('.loader-overlay')
+      if (overlay) {
+        overlay.classList.add('fade-out')
+        setTimeout(() => overlay.remove(), GAME_CONFIG.ui.fadeOutDuration)
+      }
+
+      // Mostrar login si no hay sesión activa
+      if (!this.loginManager.isLoggedIn()) {
+        await this.loginManager.showLoginModal()
+      }
+
+      // Mostrar modal de inicio solo cuando los recursos estén listos
       this.modal.show({
         icon: '🚀',
-        message: 'Recoge todas las monedas\n¡y evita los obstáculos!',
+        message: `¡Hola ${this.loginManager.getUsername()}!\nRecoge todas las monedas\n¡y evita los obstáculos!`,
         buttons: [
           {
             text: '▶️ Iniciar juego',
@@ -67,13 +80,6 @@ export default class Experience {
           }
         ]
       })
-
-      // Ocultar precarga si existe
-      const overlay = document.querySelector('.loader-overlay')
-      if (overlay) {
-        overlay.classList.add('fade-out')
-        setTimeout(() => overlay.remove(), GAME_CONFIG.ui.fadeOutDuration)
-      }
     })
 
     
@@ -88,8 +94,9 @@ export default class Experience {
     }
 
 
-    // Modal
+    // Modal y Sistema de Login
     this.modal = new ModalManager({ container: document.body })
+    this.loginManager = new LoginManager()
 
     // Menú
     this.menu = new CircularMenu({
