@@ -75,19 +75,16 @@ export default class World {
       this.fox = new Fox(this.experience);
       this.robot = new Robot(this.experience);
 
-      // Enemigos múltiples: plantilla y spawn lejos del jugador
+      // Enemigos múltiples: spawn basado en configuración del nivel
       this.enemyTemplate = new THREE.Mesh(
         new THREE.BoxGeometry(1, 1, 1),
         new THREE.MeshStandardMaterial({ color: 0xff0000 })
       );
-      const enemiesCountEnv = parseInt(
-        import.meta.env.VITE_ENEMIES_COUNT || "0",
-        10
-      );
-      const enemiesCount =
-        Number.isFinite(enemiesCountEnv) && enemiesCountEnv > 0
-          ? enemiesCountEnv
-          : 0;
+
+      // Obtener cantidad de enemigos desde GameConfig (nivel 1 por defecto)
+      const enemiesCount = GAME_CONFIG.enemy.spawnCount[1] || 0;
+      logger.info('🎮', `Spawneando ${enemiesCount} enemigos para nivel 1 desde GameConfig`);
+
       // Spawn inicial para nivel 1
       this.spawnEnemies(enemiesCount, 1);
 
@@ -354,12 +351,14 @@ export default class World {
 
       this.resetRobotPosition(spawnPoint);
 
-      // Respawnear enemigos apropiados para el nivel
-      const enemiesCountEnv = parseInt(import.meta.env.VITE_ENEMIES_COUNT || "0", 10);
-      const enemiesCount = Number.isFinite(enemiesCountEnv) && enemiesCountEnv > 0 ? enemiesCountEnv : 0;
+      // Respawnear enemigos apropiados para el nivel desde GameConfig
+      const enemiesCount = GAME_CONFIG.enemy.spawnCount[level] || 0;
 
       if (enemiesCount > 0) {
+        logger.info('🎮', `Nivel ${level}: spawneando ${enemiesCount} enemigos desde GameConfig`);
         this.spawnEnemies(enemiesCount, level);
+      } else {
+        logger.info('🎮', `Nivel ${level}: sin enemigos configurados`);
       }
 
       logger.info('✅', `Nivel ${level} cargado con spawn en (${spawnPoint.x}, ${spawnPoint.y}, ${spawnPoint.z})`);

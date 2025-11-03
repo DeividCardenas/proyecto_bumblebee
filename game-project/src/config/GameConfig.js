@@ -138,7 +138,14 @@ export const GAME_CONFIG = {
             walking: 'dash'
         },
 
-        // Spawn de enemigos
+        // Spawn de enemigos por nivel (NO depende de .env)
+        spawnCount: {
+            1: 2,   // Nivel 1: 2 enemigos Decepticon
+            2: 3,   // Nivel 2: 3 enemigos Decepticon
+            3: 1    // Nivel 3: 1 boss Shockwave
+        },
+
+        // Configuración de spawn
         spawn: {
             minRadius: 25,        // Distancia mínima de spawn desde el jugador
             maxRadius: 40,        // Distancia máxima de spawn
