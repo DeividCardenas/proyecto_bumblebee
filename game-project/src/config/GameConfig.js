@@ -117,12 +117,12 @@ export const GAME_CONFIG = {
 
         // Física
         mass: 5,
-        sphereRadius: 0.8,  // Aumentado para mejor detección de colisiones
+        sphereRadius: 1.2,  // Aumentado para mejor detección de colisiones (50% más grande)
         linearDamping: 0.01,
 
-        // Velocidades
-        baseSpeed: 1.5,           // Velocidad base (patrullaje)
-        chaseSpeed: 4.0,          // Velocidad al perseguir
+        // Velocidades (reducidas para mejor balance de gameplay)
+        baseSpeed: 1.0,           // Velocidad base (patrullaje) - reducida 33%
+        chaseSpeed: 2.5,          // Velocidad al perseguir - reducida 37%
 
         // Distancias de comportamiento
         chaseDistance: 20.0,      // A qué distancia empieza a perseguir (aumentado)
@@ -145,10 +145,10 @@ export const GAME_CONFIG = {
             3: 1    // Nivel 3: 1 boss Shockwave
         },
 
-        // Configuración de spawn
+        // Configuración de spawn (enemigos aparecen más cerca del jugador)
         spawn: {
-            minRadius: 25,        // Distancia mínima de spawn desde el jugador
-            maxRadius: 40,        // Distancia máxima de spawn
+            minRadius: 10,        // Distancia mínima de spawn - reducida 60% (más cerca)
+            maxRadius: 20,        // Distancia máxima de spawn - reducida 50% (más cerca)
             delayBetween: 0.5     // Segundos entre cada spawn
         }
     },
