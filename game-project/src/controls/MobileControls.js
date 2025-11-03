@@ -14,10 +14,15 @@ export default class MobileControls {
     this.intensity = 0
     this.moveActive = false
 
+    // Control de cámara (joystick derecho)
+    this.cameraActive = false
+    this.cameraVector = new THREE.Vector2(0, 0)
+
     this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
     if (this.isTouchDevice) {
       this.createJoystick()
       this.createJumpButton()
+      this.createCameraJoystick()  // NUEVO: joystick de cámara
       this.createCameraHint()
     }
   }
@@ -105,6 +110,107 @@ export default class MobileControls {
     document.body.appendChild(this.jumpButton)
   }
 
+  createCameraJoystick() {
+    // Joystick de cámara en el lado derecho
+    const isTablet = window.innerWidth >= 768
+    const containerSize = isTablet ? 140 : 120
+    const stickSize = isTablet ? 60 : 50
+
+    this.cameraContainer = document.createElement('div')
+    Object.assign(this.cameraContainer.style, {
+      position: 'fixed',
+      bottom: '5vh',
+      right: '5vw',
+      width: `${containerSize}px`,
+      height: `${containerSize}px`,
+      borderRadius: '50%',
+      background: 'rgba(255, 165, 0, 0.15)',
+      border: '3px solid rgba(255, 165, 0, 0.4)',
+      boxShadow: '0 0 20px rgba(255, 165, 0, 0.3), inset 0 0 20px rgba(255, 165, 0, 0.1)',
+      zIndex: '9999',
+      touchAction: 'none',
+      userSelect: 'none'
+    })
+
+    this.cameraStick = document.createElement('div')
+    Object.assign(this.cameraStick.style, {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      width: `${stickSize}px`,
+      height: `${stickSize}px`,
+      borderRadius: '50%',
+      background: 'rgba(255, 165, 0, 0.8)',
+      border: '2px solid rgba(255, 255, 255, 0.9)',
+      boxShadow: '0 0 15px rgba(255, 165, 0, 0.6)',
+      transform: 'translate(-50%, -50%)',
+      transition: '0.1s',
+      pointerEvents: 'none'
+    })
+
+    // Icono de cámara
+    const cameraIcon = document.createElement('div')
+    cameraIcon.innerHTML = '📷'
+    cameraIcon.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; pointer-events: none;'
+    this.cameraStick.appendChild(cameraIcon)
+
+    this.cameraContainer.appendChild(this.cameraStick)
+    document.body.appendChild(this.cameraContainer)
+
+    this.cameraCenter = { x: 0, y: 0 }
+    this.cameraRadius = containerSize / 2
+
+    this.cameraContainer.addEventListener('touchstart', this.onCameraStart.bind(this))
+    this.cameraContainer.addEventListener('touchmove', this.onCameraMove.bind(this))
+    this.cameraContainer.addEventListener('touchend', this.onCameraEnd.bind(this))
+  }
+
+  onCameraStart(e) {
+    const rect = this.cameraContainer.getBoundingClientRect()
+    this.cameraCenter = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    }
+    this.cameraActive = true
+
+    // Feedback visual
+    this.cameraContainer.style.boxShadow = '0 0 30px rgba(255, 165, 0, 0.6), inset 0 0 30px rgba(255, 165, 0, 0.2)'
+    this.cameraContainer.style.borderColor = 'rgba(255, 165, 0, 0.7)'
+  }
+
+  onCameraMove(e) {
+    if (!this.cameraActive) return
+    const touch = e.touches[0]
+    const dx = touch.clientX - this.cameraCenter.x
+    const dy = touch.clientY - this.cameraCenter.y
+
+    const dist = Math.min(Math.sqrt(dx * dx + dy * dy), this.cameraRadius)
+    const angle = Math.atan2(dy, dx)
+
+    const offsetX = Math.cos(angle) * dist
+    const offsetY = Math.sin(angle) * dist
+
+    this.cameraStick.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`
+
+    // Normalizar y guardar vector para que ThirdPersonCamera lo use
+    const deadZone = 15
+    if (dist < deadZone) {
+      this.cameraVector.set(0, 0)
+    } else {
+      this.cameraVector.set(dx / this.cameraRadius, dy / this.cameraRadius)
+    }
+  }
+
+  onCameraEnd(e) {
+    this.cameraActive = false
+    this.cameraStick.style.transform = 'translate(-50%, -50%)'
+    this.cameraVector.set(0, 0)
+
+    // Restaurar brillo normal
+    this.cameraContainer.style.boxShadow = '0 0 20px rgba(255, 165, 0, 0.3), inset 0 0 20px rgba(255, 165, 0, 0.1)'
+    this.cameraContainer.style.borderColor = 'rgba(255, 165, 0, 0.4)'
+  }
+
   onStart(e) {
     const rect = this.container.getBoundingClientRect()
     this.center = {
@@ -182,12 +288,12 @@ export default class MobileControls {
     this.cameraHint = document.createElement('div')
     this.cameraHint.innerHTML = `
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 20px;">👆</span>
-        <span>Desliza para rotar cámara</span>
+        <span style="font-size: 20px;">📷</span>
+        <span>Joystick naranja: rotar cámara</span>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-        <span style="font-size: 20px;">🤏</span>
-        <span>Pellizca para zoom</span>
+        <span style="font-size: 20px;">🕹️</span>
+        <span>Joystick cyan: mover robot</span>
       </div>
     `
     Object.assign(this.cameraHint.style, {
@@ -229,6 +335,7 @@ export default class MobileControls {
   destroy() {
     this.container?.remove()
     this.jumpButton?.remove()
+    this.cameraContainer?.remove()
     this.cameraHint?.remove()
   }
 }

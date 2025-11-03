@@ -227,8 +227,13 @@ export default class ThirdPersonCamera {
                 const touchRotationSpeed = this.config.touchRotationSpeed || this.config.rotationSpeed * 1.5
                 const touchVerticalSpeed = this.config.touchVerticalRotationSpeed || this.config.verticalRotationSpeed * 1.5
 
+                // Control horizontal
                 this.horizontalAngle -= deltaX * touchRotationSpeed
-                this.verticalAngle -= deltaY * touchVerticalSpeed
+
+                // Control vertical: arriba = cámara sube, abajo = cámara baja (natural)
+                // Si touchInvertY es true, se invierte el comportamiento
+                const verticalMultiplier = this.config.touchInvertY ? 1 : -1
+                this.verticalAngle += deltaY * touchVerticalSpeed * verticalMultiplier
 
                 // Limitar pitch
                 this.verticalAngle = Math.max(
@@ -487,6 +492,27 @@ export default class ThirdPersonCamera {
 
         // 1. Suavizar zoom
         this.currentDistance += (this.targetDistance - this.currentDistance) * this.config.zoomLerp
+
+        // 1.5. Aplicar rotación desde joystick de cámara móvil (si existe)
+        if (window.experience?.mobileControls?.cameraVector) {
+            const cameraVec = window.experience.mobileControls.cameraVector
+            if (cameraVec.length() > 0) {
+                // Aplicar rotación basada en el joystick
+                const joystickSensitivity = 0.05 // Sensibilidad del joystick
+
+                this.horizontalAngle -= cameraVec.x * joystickSensitivity
+
+                // Control vertical: invertir si touchInvertY es true
+                const verticalMultiplier = this.config.touchInvertY ? 1 : -1
+                this.verticalAngle += cameraVec.y * joystickSensitivity * verticalMultiplier
+
+                // Limitar pitch
+                this.verticalAngle = Math.max(
+                    this.config.minPitch,
+                    Math.min(this.config.maxPitch, this.verticalAngle)
+                )
+            }
+        }
 
         // 2. Calcular posición ideal
         let idealPosition = this.calculateIdealPosition()
