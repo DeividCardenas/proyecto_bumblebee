@@ -6,13 +6,11 @@ import { GAME_CONFIG } from '../../config/GameConfig.js';
 /**
  * BossEnemy - Clase extendida para el jefe final (Shockwave)
  *
- * Características especiales:
+ * Extiende Enemy.js y sobrescribe solo lo necesario:
  * - Usa el modelo Shockwave.glb en lugar de Decepticon_Soldier.glb
- * - Mayor escala visual (más intimidante)
- * - Mayor rango de persecución (más agresivo)
- * - Velocidad de persecución aumentada
+ * - Mayor escala visual (20% más grande)
+ * - Mayor rango de persecución y velocidad
  * - Mismo sistema de animaciones (idle01, dash)
- * - Sistema de remoción de armas heredado
  *
  * @extends Enemy
  */
@@ -39,98 +37,78 @@ export default class BossEnemy extends Enemy {
     // Escala aumentada para el boss (20% más grande que enemigos normales)
     const bossScale = GAME_CONFIG.enemy.modelScale * 1.2;
 
-    // Clonar escena / mesh
-    this.model = resource.scene.clone(true);
+    // IGUAL QUE ENEMY/ROBOT: NO clonar, usar directo
+    this.model = resource.scene;
     this.model.scale.set(bossScale, bossScale, bossScale);
+    this.model.position.set(0, 0, 0); // Posición relativa al group
 
-    // Asegurarse de tener una posición THREE.Vector3
-    this.model.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
+    // IGUAL QUE ENEMY/ROBOT: Crear group y agregar modelo al group
+    this.group = new THREE.Group();
+    this.group.position.copy(this.initialPosition);
+    this.group.add(this.model);
+    this.scene.add(this.group);
 
-    this.scene.add(this.model);
-    this.model.visible = true;
-
-    // CRÍTICO: Forzar visibilidad de TODOS los children del modelo
-    let meshCount = 0;
+    // IGUAL QUE ENEMY/ROBOT: Traverse simple solo para sombras
     this.model.traverse((child) => {
-      child.visible = true;
-
-      if (child.isMesh || child instanceof THREE.Mesh) {
-        meshCount++;
+      if (child instanceof THREE.Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-
-        if (child.material) {
-          child.material.visible = true;
-          if (child.material.transparent === false) {
-            child.material.opacity = 1.0;
-          }
-        }
       }
     });
 
-    logger.info('👹👑✅', `Modelo BOSS cargado: ${this.model.children.length} children, ${meshCount} meshes (escala ${bossScale})`);
-    logger.info('👹👑📍', `Posición BOSS: (${this.initialPosition.x}, ${this.initialPosition.y}, ${this.initialPosition.z})`);
-
-    // CRÍTICO: Remover armas del boss también
-    // NOTA: Deshabilitado temporalmente para debug
-    // this.removeWeapons();
-
-    // Log de estructura del modelo para debug
-    this.logModelStructure();
+    logger.info('👹👑', `Modelo BOSS cargado (escala ${bossScale})`);
   }
 
   /**
    * Sobrescribir setAnimation para usar el bossModel resource
    */
   setAnimation() {
-    const resource = this.resources?.items?.bossModel;
-    if (!resource) {
-      logger.warn('No hay resource.animations para BossEnemy.');
-      this.animation = null;
+    this.animation = {};
+    this.animation.mixer = new THREE.AnimationMixer(this.model);
+    this.animation.actions = {};
+
+    const animations = this.resources.items.bossModel.animations;
+    if (!animations || animations.length === 0) {
+      logger.error('El modelo del BOSS no tiene animaciones');
       return;
     }
 
-    this.animation = {
-      mixer: new THREE.AnimationMixer(this.model),
-      actions: {},
-      current: null
-    };
-
-    // Debug: listar nombres de animaciones disponibles
-    if (Array.isArray(resource.animations)) {
-      logger.debug('BossEnemy: animaciones disponibles ->', resource.animations.map(a => a.name));
-    }
-
     const CONFIG = GAME_CONFIG.enemy;
+
+    // Cargar animaciones requeridas
     for (const [actionKey, animName] of Object.entries(CONFIG.requiredAnimations)) {
-      const clip = resource.animations?.find(anim => anim.name === animName);
+      const clip = animations.find(anim => anim.name === animName);
       if (clip) {
         this.animation.actions[actionKey] = this.animation.mixer.clipAction(clip);
       } else {
-        logger.warn(`Animación de BossEnemy "${animName}" no encontrada. actionKey=${actionKey}`);
+        logger.warn(`Animación "${animName}" no encontrada para BOSS`);
       }
     }
 
-    // Fallback
+    // Fallback si no se encuentra idle
     if (!this.animation.actions.idle) {
-      const anyClip = resource.animations?.[0];
+      const anyClip = animations[0];
       if (anyClip) {
         logger.warn('BossEnemy: Asignando clip por defecto como idle.');
         this.animation.actions.idle = this.animation.mixer.clipAction(anyClip);
       } else {
-        logger.warn('BossEnemy: No hay clips disponibles para animaciones.');
+        logger.error('BossEnemy: No hay clips disponibles.');
+        return;
       }
     }
+
+    // Fallback para walking
     if (!this.animation.actions.walking) {
       this.animation.actions.walking = this.animation.actions.idle;
     }
 
+    // Iniciar con idle
     if (this.animation.actions.idle) {
       this.animation.actions.current = this.animation.actions.idle;
       this.animation.actions.current.play();
     }
 
-    // Función play segura
+    // Función play
     this.animation.play = (name) => {
       if (!this.animation) return;
       const newAction = this.animation.actions[name];
@@ -147,20 +125,22 @@ export default class BossEnemy extends Enemy {
         logger.warn('BossEnemy: Error al cambiar animación:', err);
       }
     };
+
+    logger.info('👹👑🎬', 'Animaciones del BOSS configuradas correctamente');
   }
 
   /**
    * Sobrescribir update para comportamiento de boss mejorado
-   * - Mayor rango de persecución
-   * - Velocidad aumentada
+   * - Mayor rango de persecución (1.5x)
+   * - Velocidad aumentada (1.2x chase, 1.1x base)
    */
   update(deltaTime) {
-    if (this.isDestroyed) return;
-    if (!this.body || !this.playerRef?.body) {
-      if (this.model && (!this.body)) {
-        this.model.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
-      }
-      return;
+    if (!this.isInitialized || this.isDead || this.isDestroyed) return;
+    if (!this.body || !this.playerRef?.body) return;
+
+    // Actualizar animaciones
+    if (this.animation?.mixer) {
+      this.animation.mixer.update(deltaTime);
     }
 
     const targetPos = this.targetPosition.copy(this.playerRef.body.position);
@@ -169,15 +149,15 @@ export default class BossEnemy extends Enemy {
 
     const distanceFromSpawn = enemyPos.distanceTo(this.spawnPosition);
 
-    // Boss: mayor rango de persecución (1.5x normal)
+    // Boss: parámetros mejorados
     const BOSS_MAX_CHASE_DISTANCE = GAME_CONFIG.enemy.maxChaseDistance * 1.5;
     const BOSS_CHASE_DISTANCE = GAME_CONFIG.enemy.chaseDistance * 1.5;
+    const BOSS_RETURN_DISTANCE = GAME_CONFIG.enemy.returnToSpawnDistance * 1.5;
     const BOSS_CHASE_SPEED = GAME_CONFIG.enemy.chaseSpeed * 1.2; // 20% más rápido
     const BOSS_BASE_SPEED = GAME_CONFIG.enemy.baseSpeed * 1.1; // 10% más rápido
 
-    // Si el boss se alejó mucho de su spawn, volver
-    if (distanceFromSpawn > GAME_CONFIG.enemy.returnToSpawnDistance * 1.5) {
-      logger.debug('👹👑', 'Boss demasiado lejos del spawn, regresando...');
+    // Si el boss se alejó mucho, volver
+    if (distanceFromSpawn > BOSS_RETURN_DISTANCE) {
       this.moveDirection.copy(this.spawnPosition);
       this.moveDirection.vsub(enemyPos, this.moveDirection);
       this.moveDirection.normalize();
@@ -189,16 +169,12 @@ export default class BossEnemy extends Enemy {
 
       this.animation?.play('walking');
 
-      if (this.model) {
-        const lookTarget = new THREE.Vector3(
-          this.model.position.x + this.moveDirection.x,
-          this.model.position.y,
-          this.model.position.z + this.moveDirection.z
-        );
-        this.model.lookAt(lookTarget);
+      if (this.group) {
+        const angle = Math.atan2(this.moveDirection.x, this.moveDirection.z);
+        this.group.rotation.y = angle;
       }
     }
-    // Boss persigue al jugador con mayor rango
+    // Boss persigue con mayor rango
     else if (distance < BOSS_MAX_CHASE_DISTANCE && distance > GAME_CONFIG.enemy.stopDistance) {
       this.moveDirection.copy(targetPos);
       this.moveDirection.vsub(enemyPos, this.moveDirection);
@@ -214,13 +190,9 @@ export default class BossEnemy extends Enemy {
 
       this.animation?.play('walking');
 
-      if (this.model) {
-        const lookTarget = new THREE.Vector3(
-          this.model.position.x + this.moveDirection.x,
-          this.model.position.y,
-          this.model.position.z + this.moveDirection.z
-        );
-        this.model.lookAt(lookTarget);
+      if (this.group) {
+        const angle = Math.atan2(this.moveDirection.x, this.moveDirection.z);
+        this.group.rotation.y = angle;
       }
     } else {
       // Detenerse
@@ -228,30 +200,30 @@ export default class BossEnemy extends Enemy {
       this.animation?.play('idle');
     }
 
-    // Sincronizar modelo visual con cuerpo físico
-    if (this.model && this.body) {
-      this.model.position.set(this.body.position.x, this.body.position.y, this.body.position.z);
-      this.model.quaternion.set(
-        this.body.quaternion.x,
-        this.body.quaternion.y,
-        this.body.quaternion.z,
-        this.body.quaternion.w
-      );
+    // CRÍTICO: Sincronizar GROUP con body - IGUAL QUE ENEMY/ROBOT
+    if (this.group && this.body) {
+      this.group.position.copy(this.body.position);
     }
 
     // Sonido de proximidad (más fuerte para el boss)
     const proximityVolume = Math.max(0, 1 - (distance / GAME_CONFIG.enemy.soundMaxDistance));
     this.proximitySound?.setVolume(proximityVolume * 1.0); // 100% volumen (vs 80% normal)
+  }
 
-    // Actualizar animaciones
-    this.animation?.mixer?.update(deltaTime);
+  /**
+   * Sobrescribir die para logging especial del boss
+   */
+  die() {
+    logger.info('👹👑💀', '¡BOSS DERROTADO!');
+    super.die();
   }
 
   /**
    * Sobrescribir destroy para logging especial
    */
   destroy() {
-    logger.info('👹👑', 'Boss Enemy (Shockwave) destruido');
+    if (this.isDestroyed) return;
+    logger.info('👹👑🗑️', 'Boss Enemy (Shockwave) destruido');
     super.destroy();
   }
 }
