@@ -92,51 +92,66 @@ export default class CircularMenu {
       this.actionButtons.push(btn)
     })
 
-    // HUD: Tiempo
+    // HUD: Diseño mejorado con estilo moderno
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-    const fontSize = isMobile ? '18px' : '16px'
-    const padding = isMobile ? '8px 14px' : '6px 12px'
+    const fontSize = isMobile ? '17px' : '15px'
+    const padding = isMobile ? '12px 18px' : '10px 16px'
 
+    // Estilos base para HUD mejorado
+    const hudBaseStyle = {
+      position: 'fixed',
+      fontSize: fontSize,
+      fontWeight: '700',
+      background: 'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%)',
+      backdropFilter: 'blur(12px)',
+      color: '#e2e8f0',
+      padding: padding,
+      borderRadius: '16px',
+      zIndex: 9997,
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      pointerEvents: 'none',
+      border: '2px solid rgba(139, 92, 246, 0.4)',
+      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 0 40px rgba(139, 92, 246, 0.15)',
+      letterSpacing: '0.3px',
+      transition: 'all 0.3s ease'
+    }
+
+    // HUD: Tiempo (izquierda superior)
     this.timer = document.createElement('div')
     this.timer.id = 'hud-timer'
-    this.timer.innerText = '⏱ 0s'
+    this.timer.innerHTML = '<span style="font-size: 20px; margin-right: 8px;">⏱</span><span style="color: #a78bfa;">0s</span>'
     Object.assign(this.timer.style, {
-      position: 'fixed',
-      top: '16px',
-      left: '70px',
-      fontSize: fontSize,
-      fontWeight: 'bold',
-      background: 'rgba(0,0,0,0.75)',
-      color: '#00fff7',
-      padding: padding,
-      borderRadius: '8px',
-      zIndex: 9999,
-      fontFamily: 'monospace',
-      pointerEvents: 'none',
-      border: '1px solid rgba(0, 255, 247, 0.3)',
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
+      ...hudBaseStyle,
+      top: '25px',
+      left: '25px'
     })
     document.body.appendChild(this.timer)
 
-    // HUD: Puntos
+    // HUD: Puntos (parte superior central-derecha con estilo destacado)
     this.status = document.createElement('div')
     this.status.id = 'hud-points'
-    this.status.innerText = '🎖️ Puntos: 0'
+    this.status.innerHTML = '<span style="font-size: 22px; margin-right: 10px;">🎖️</span><span style="color: #fbbf24; font-size: 18px; font-weight: 800;">0</span><span style="color: #94a3b8; margin-left: 6px; font-size: 13px;">puntos</span>'
     Object.assign(this.status.style, {
       position: 'fixed',
-      top: '16px',
-      right: '20px',
-      fontSize: fontSize,
-      fontWeight: 'bold',
-      background: 'rgba(0,0,0,0.75)',
-      color: '#00fff7',
-      padding: padding,
-      borderRadius: '8px',
-      zIndex: 9999,
-      fontFamily: 'monospace',
+      top: '90px',
+      right: '25px',
+      fontSize: isMobile ? '16px' : '15px',
+      fontWeight: '700',
+      background: 'linear-gradient(135deg, rgba(30,27,75,0.95) 0%, rgba(74,58,147,0.95) 100%)',
+      backdropFilter: 'blur(12px)',
+      color: '#e2e8f0',
+      padding: isMobile ? '14px 20px' : '12px 18px',
+      borderRadius: '20px',
+      zIndex: 9997,
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       pointerEvents: 'none',
-      border: '1px solid rgba(0, 255, 247, 0.3)',
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
+      border: '2px solid rgba(251, 191, 36, 0.5)',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 50px rgba(251, 191, 36, 0.2)',
+      letterSpacing: '0.5px',
+      transition: 'all 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '2px'
     })
     document.body.appendChild(this.status)
 
@@ -243,11 +258,29 @@ export default class CircularMenu {
   }
 
   setStatus(text) {
-    if (this.status) this.status.innerText = text
+    if (!this.status) return
+
+    // Extraer número de puntos del texto (formato esperado: "🎖️ Puntos: 5")
+    const match = text.match(/(\d+)/)
+    const points = match ? match[1] : '0'
+
+    // Actualizar con HTML mejorado
+    this.status.innerHTML = `<span style="font-size: 22px; margin-right: 10px;">🎖️</span><span style="color: #fbbf24; font-size: 18px; font-weight: 800;">${points}</span><span style="color: #94a3b8; margin-left: 6px; font-size: 13px;">puntos</span>`
+
+    // Animación de pulso cuando aumentan los puntos
+    if (parseInt(points) > 0) {
+      this.status.style.transform = 'scale(1.1)'
+      setTimeout(() => {
+        this.status.style.transform = 'scale(1)'
+      }, 200)
+    }
   }
 
   setTimer(seconds) {
-    if (this.timer) this.timer.innerText = `⏱ ${seconds}s`
+    if (!this.timer) return
+
+    // Actualizar con HTML mejorado
+    this.timer.innerHTML = `<span style="font-size: 20px; margin-right: 8px;">⏱</span><span style="color: #a78bfa;">${seconds}s</span>`
   }
 
   //Contador jugadores
