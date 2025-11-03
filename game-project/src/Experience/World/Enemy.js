@@ -94,7 +94,67 @@ export default class Enemy {
       }
     });
 
+    // CRÍTICO: Remover armas y accesorios del modelo (solicitado por usuario)
+    this.removeWeapons();
+
     logger.info('👹', `Modelo de enemigo cargado con ${this.model.children.length} children`);
+  }
+
+  /**
+   * Remueve armas y accesorios armamentísticos del modelo del enemigo
+   * El usuario solicitó explícitamente: "armas y eso no deben tener mis robots"
+   */
+  removeWeapons() {
+    if (!this.model) return;
+
+    // Patrones de nombres de armas (case-insensitive)
+    const weaponPatterns = [
+      'weapon', 'gun', 'rifle', 'pistol', 'blade', 'sword', 'cannon',
+      'arma', 'blaster', 'saber', 'missile', 'launcher', 'barrel',
+      'trigger', 'scope', 'magazine', 'clip', 'muzzle', 'silencer'
+    ];
+
+    const itemsToRemove = [];
+
+    // Primera pasada: identificar armas
+    this.model.traverse((child) => {
+      if (!child.name) return;
+
+      const childNameLower = child.name.toLowerCase();
+
+      // Verificar si el nombre contiene algún patrón de arma
+      const isWeapon = weaponPatterns.some(pattern => childNameLower.includes(pattern));
+
+      if (isWeapon) {
+        itemsToRemove.push({ child, parent: child.parent, name: child.name });
+      }
+    });
+
+    // Segunda pasada: remover armas identificadas
+    itemsToRemove.forEach(({ child, parent, name }) => {
+      if (parent) {
+        parent.remove(child);
+        logger.info('🔫❌', `Arma removida del enemigo: "${name}"`);
+
+        // Limpiar geometría y material para liberar memoria
+        if (child.geometry) {
+          child.geometry.dispose();
+        }
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => mat.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      }
+    });
+
+    if (itemsToRemove.length > 0) {
+      logger.info('👹✅', `Total de armas removidas: ${itemsToRemove.length}`);
+    } else {
+      logger.debug('👹', 'No se encontraron armas en el modelo del enemigo');
+    }
   }
 
   setAnimation() {

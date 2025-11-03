@@ -34,7 +34,12 @@ export default [
     {
         name: 'enemyRedModel',
         type: 'gltfModel',
-        path: '/models/Enemy/Enemy_Red.glb'
+        path: '/models/Enemy/Decepticon_Soldier.glb'
+    },
+    {
+        name: 'bossModel',
+        type: 'gltfModel',
+        path: '/models/Enemy/Shockwave.glb'
     },
     {
         name: 'Portal',

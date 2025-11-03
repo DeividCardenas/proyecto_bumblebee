@@ -11,6 +11,7 @@ import MobileControls from "../../controls/MobileControls.js";
 import LevelManager from "./LevelManager.js";
 import BlockPrefab from "./BlockPrefab.js";
 import Enemy from "./Enemy.js";
+import BossEnemy from "./BossEnemy.js";
 import GameLogic from "../Utils/GameLogic.js";
 import FXManager from "../Utils/FXManager.js";
 import Prize from "./Prize.js";
@@ -87,7 +88,8 @@ export default class World {
         Number.isFinite(enemiesCountEnv) && enemiesCountEnv > 0
           ? enemiesCountEnv
           : 0;
-      this.spawnEnemies(enemiesCount);
+      // Spawn inicial para nivel 1
+      this.spawnEnemies(enemiesCount, 1);
 
       this.thirdPersonCamera = new ThirdPersonCamera(
         this.experience,
@@ -132,8 +134,14 @@ export default class World {
     });
   }
 
-  // Crear varios enemigos en posiciones alejadas del jugador para evitar atascos iniciales
-  spawnEnemies(count = 0) {
+  /**
+   * Crear varios enemigos en posiciones alejadas del jugador
+   * @param {number} count - Número de enemigos a spawnear
+   * @param {number} level - Nivel actual (determina el tipo de enemigo)
+   *   - Niveles 1-2: Decepticon_Soldier (Enemy)
+   *   - Nivel 3: Shockwave (BossEnemy)
+   */
+  spawnEnemies(count = 0, level = 1) {
     if (!this.robot?.body?.position) return;
     const playerPos = this.robot.body.position;
     const config = GAME_CONFIG.enemy.spawn;
@@ -146,6 +154,13 @@ export default class World {
       this.enemies = [];
     }
 
+    // Determinar tipo de enemigo basado en el nivel
+    const isBossLevel = level >= 3;
+    const EnemyClass = isBossLevel ? BossEnemy : Enemy;
+    const enemyType = isBossLevel ? "Boss (Shockwave)" : "Normal (Decepticon)";
+
+    logger.info('👹', `Spawneando ${count} enemigos tipo ${enemyType} para nivel ${level}`);
+
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
       const radius = minRadius + Math.random() * (maxRadius - minRadius);
@@ -153,7 +168,7 @@ export default class World {
       const z = playerPos.z + Math.sin(angle) * radius;
       const y = 1.5;
 
-      const enemy = new Enemy({
+      const enemy = new EnemyClass({
         experience: this.experience,
         playerRef: this.robot,
         position: new THREE.Vector3(x, y, z),
@@ -163,7 +178,8 @@ export default class World {
       enemy.delayActivation = 1.0 + i * config.delayBetween;
       this.enemies.push(enemy);
     }
-    logger.debug(`${count} enemigos spawneados`);
+
+    logger.debug(`✅ ${count} enemigos tipo ${enemyType} spawneados correctamente`);
   }
 
   toggleAudio() {
@@ -337,6 +353,15 @@ export default class World {
       }
 
       this.resetRobotPosition(spawnPoint);
+
+      // Respawnear enemigos apropiados para el nivel
+      const enemiesCountEnv = parseInt(import.meta.env.VITE_ENEMIES_COUNT || "0", 10);
+      const enemiesCount = Number.isFinite(enemiesCountEnv) && enemiesCountEnv > 0 ? enemiesCountEnv : 0;
+
+      if (enemiesCount > 0) {
+        this.spawnEnemies(enemiesCount, level);
+      }
+
       logger.info('✅', `Nivel ${level} cargado con spawn en (${spawnPoint.x}, ${spawnPoint.y}, ${spawnPoint.z})`);
     } catch (error) {
       logger.error("Error cargando nivel:", error);
@@ -584,11 +609,6 @@ showFinalPrize() {
 
     // NUEVO: Limpiar los efectos visuales
     this.fxManager.clearFinalPrizeBeacon();
-
-    // --- ¡NUEVO! ---
-    // Detenemos y limpiamos el mixer del portal
-
-    // ---
   }
 
   resetRobotPosition(spawn = { x: 0, y: 0, z: 0 }) {
