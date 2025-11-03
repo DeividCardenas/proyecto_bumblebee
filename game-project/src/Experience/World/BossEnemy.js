@@ -36,8 +36,8 @@ export default class BossEnemy extends Enemy {
       throw new Error('El recurso "bossModel" no está cargado en resources.items.');
     }
 
-    // Escala aumentada para el boss (30% más grande que enemigos normales)
-    const bossScale = GAME_CONFIG.enemy.modelScale * 1.3;
+    // Escala aumentada para el boss (20% más grande que enemigos normales)
+    const bossScale = GAME_CONFIG.enemy.modelScale * 1.2;
 
     // Clonar escena / mesh
     this.model = resource.scene.clone(true);
@@ -50,10 +50,12 @@ export default class BossEnemy extends Enemy {
     this.model.visible = true;
 
     // CRÍTICO: Forzar visibilidad de TODOS los children del modelo
+    let meshCount = 0;
     this.model.traverse((child) => {
       child.visible = true;
 
       if (child.isMesh || child instanceof THREE.Mesh) {
+        meshCount++;
         child.castShadow = true;
         child.receiveShadow = true;
 
@@ -66,10 +68,15 @@ export default class BossEnemy extends Enemy {
       }
     });
 
-    // CRÍTICO: Remover armas del boss también
-    this.removeWeapons();
+    logger.info('👹👑✅', `Modelo BOSS cargado: ${this.model.children.length} children, ${meshCount} meshes (escala ${bossScale})`);
+    logger.info('👹👑📍', `Posición BOSS: (${this.initialPosition.x}, ${this.initialPosition.y}, ${this.initialPosition.z})`);
 
-    logger.info('👹👑', `Modelo de BOSS cargado con ${this.model.children.length} children (escala ${bossScale})`);
+    // CRÍTICO: Remover armas del boss también
+    // NOTA: Deshabilitado temporalmente para debug
+    // this.removeWeapons();
+
+    // Log de estructura del modelo para debug
+    this.logModelStructure();
   }
 
   /**

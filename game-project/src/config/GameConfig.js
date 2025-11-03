@@ -112,12 +112,12 @@ export const GAME_CONFIG = {
     // ENEMIGOS
     // ========================================
     enemy: {
-        // Escala del modelo 3D (aumentada para mejor visibilidad)
-        modelScale: 0.8,
+        // Escala del modelo 3D (igual que el robot para consistencia)
+        modelScale: 0.7,
 
         // Física
         mass: 5,
-        sphereRadius: 0.5,
+        sphereRadius: 0.8,  // Aumentado para mejor detección de colisiones
         linearDamping: 0.01,
 
         // Velocidades
