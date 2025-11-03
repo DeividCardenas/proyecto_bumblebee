@@ -609,11 +609,6 @@ showFinalPrize() {
 
     // NUEVO: Limpiar los efectos visuales
     this.fxManager.clearFinalPrizeBeacon();
-
-    // --- ¡NUEVO! ---
-    // Detenemos y limpiamos el mixer del portal
-
-    // ---
   }
 
   resetRobotPosition(spawn = { x: 0, y: 0, z: 0 }) {

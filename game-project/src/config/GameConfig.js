@@ -83,7 +83,7 @@ export const GAME_CONFIG = {
 
         // Movimiento
         moveForce: 260,
-        turnSpeed: 3.1,
+        turnSpeed: 2.0,                 // Velocidad de giro (reducida de 3.1 para mejor control)
         maxSpeed: 18,
 
         // Salto
@@ -219,11 +219,17 @@ export const GAME_CONFIG = {
             zoomSpeed: 0.5,                     // Velocidad de zoom con scroll
             defaultDistance: 8,                 // Distancia inicial
 
-            // Rotación
+            // Rotación (Mouse/Desktop)
             rotationSpeed: 0.003,               // Sensibilidad de rotación horizontal (yaw)
             verticalRotationSpeed: 0.002,       // Sensibilidad de rotación vertical (pitch)
             minPitch: -Math.PI / 6,             // Límite hacia abajo (-30°)
             maxPitch: Math.PI / 3,              // Límite hacia arriba (60°)
+
+            // Rotación Táctil (Touch/Móvil/Tablet)
+            touchRotationSpeed: 0.0025,         // Sensibilidad táctil horizontal (reducida)
+            touchVerticalRotationSpeed: 0.002,  // Sensibilidad táctil vertical (reducida)
+            touchZoomSpeed: 0.04,               // Sensibilidad de pinch-to-zoom
+            touchInvertY: false,                // Invertir eje Y: false = arriba sube, abajo baja (natural)
 
             // Suavizado (lerp factors)
             positionLerp: 0.1,                  // Suavizado de posición (más alto = más rápido)
