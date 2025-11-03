@@ -1,284 +1,338 @@
-// Sistema de autenticación y gestión de progreso del jugador
-// Usa localStorage para guardar progreso localmente
+import logger from '../utils/Logger.js';
 
+/**
+ * LoginManager - Sistema de autenticación y progreso del jugador
+ * Funcionalidades:
+ * - Login con nombre de usuario
+ * - Guardar progreso en localStorage
+ * - Cerrar sesión (logout)
+ * - Tracking de nivel, puntos y tiempo jugado
+ */
 export default class LoginManager {
-    constructor() {
-        this.currentUser = null
-        this.storageKey = 'bumblebee_user_data'
-        this.loginModal = null
+  constructor() {
+    this.currentUser = null;
+    this.storageKey = 'bumblebee_user_data';
+    this.logoutButton = null;
 
-        this.checkExistingSession()
+    // Verificar si hay sesión existente
+    this.checkExistingSession();
+  }
+
+  /**
+   * Verificar si existe una sesión guardada en localStorage
+   */
+  checkExistingSession() {
+    try {
+      const savedData = localStorage.getItem(this.storageKey);
+      if (savedData) {
+        this.currentUser = JSON.parse(savedData);
+        logger.info('👤', `Sesión restaurada: ${this.currentUser.username}`);
+
+        // Crear botón de logout automáticamente
+        this.createLogoutButton();
+        return true;
+      }
+    } catch (error) {
+      logger.error('Error al restaurar sesión:', error);
+      localStorage.removeItem(this.storageKey);
     }
+    return false;
+  }
 
-    /**
-     * Verificar si hay una sesión guardada
-     */
-    checkExistingSession() {
-        const savedData = localStorage.getItem(this.storageKey)
-        if (savedData) {
-            try {
-                this.currentUser = JSON.parse(savedData)
-                console.log('✅ Sesión restaurada:', this.currentUser.username)
-                return true
-            } catch (e) {
-                console.error('Error al restaurar sesión:', e)
-                localStorage.removeItem(this.storageKey)
-            }
-        }
-        return false
-    }
+  /**
+   * Verificar si el usuario está logueado
+   */
+  isLoggedIn() {
+    return this.currentUser !== null;
+  }
 
-    /**
-     * Mostrar modal de login
-     */
-    showLoginModal() {
-        return new Promise((resolve) => {
-            // Crear modal
-            this.loginModal = document.createElement('div')
-            this.loginModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background: rgba(0, 0, 0, 0.9);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 999999;
-                backdrop-filter: blur(10px);
-            `
+  /**
+   * Obtener nombre de usuario actual
+   */
+  getUsername() {
+    return this.currentUser?.username || 'Invitado';
+  }
 
-            this.loginModal.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                    padding: 40px;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 60px rgba(0, 255, 247, 0.3);
-                    border: 2px solid rgba(0, 255, 247, 0.5);
-                    max-width: 400px;
-                    width: 90%;
-                    text-align: center;
-                ">
-                    <h2 style="
-                        color: #00fff7;
-                        margin-bottom: 10px;
-                        font-family: 'Arial', sans-serif;
-                        font-size: 32px;
-                        text-shadow: 0 0 20px rgba(0, 255, 247, 0.5);
-                    ">🎮 Proyecto Bumblebee</h2>
-                    <p style="
-                        color: #aaa;
-                        margin-bottom: 30px;
-                        font-size: 14px;
-                    ">Ingresa tu nombre para guardar tu progreso</p>
+  /**
+   * Mostrar modal de login
+   */
+  showLoginModal() {
+    return new Promise((resolve) => {
+      // Crear modal
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      `;
 
-                    <input
-                        type="text"
-                        id="username-input"
-                        placeholder="Nombre de jugador"
-                        maxlength="20"
-                        style="
-                            width: 100%;
-                            padding: 15px;
-                            font-size: 16px;
-                            border: 2px solid rgba(0, 255, 247, 0.3);
-                            border-radius: 10px;
-                            background: rgba(255, 255, 255, 0.05);
-                            color: white;
-                            margin-bottom: 20px;
-                            box-sizing: border-box;
-                            outline: none;
-                            transition: all 0.3s;
-                        "
-                    />
+      const container = document.createElement('div');
+      container.style.cssText = `
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+      `;
 
-                    <button id="login-btn" style="
-                        width: 100%;
-                        padding: 15px;
-                        font-size: 18px;
-                        font-weight: bold;
-                        background: linear-gradient(135deg, #00fff7 0%, #00d4ff 100%);
-                        color: #000;
-                        border: none;
-                        border-radius: 10px;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        box-shadow: 0 5px 15px rgba(0, 255, 247, 0.4);
-                    ">
-                        Jugar Ahora
-                    </button>
+      container.innerHTML = `
+        <h1 style="margin: 0 0 10px 0; color: #333; font-size: 32px;">🤖 Bumblebee</h1>
+        <p style="margin: 0 0 30px 0; color: #666; font-size: 16px;">¡Bienvenido al juego!</p>
+        <input
+          type="text"
+          id="username-input"
+          placeholder="Ingresa tu nombre"
+          maxlength="20"
+          style="
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+          "
+        />
+        <button
+          id="login-btn"
+          style="
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+          "
+        >
+          🚀 Iniciar Juego
+        </button>
+      `;
 
-                    <div id="stats-container" style="
-                        margin-top: 30px;
-                        padding: 20px;
-                        background: rgba(0, 0, 0, 0.3);
-                        border-radius: 10px;
-                        display: none;
-                    ">
-                        <h3 style="color: #00fff7; margin-bottom: 15px;">📊 Tu Progreso</h3>
-                        <div style="color: #fff; font-size: 14px; line-height: 2;">
-                            <div>🏆 Nivel Alcanzado: <span id="level-stat">-</span></div>
-                            <div>⭐ Puntos Totales: <span id="points-stat">-</span></div>
-                            <div>⏱️ Tiempo Jugado: <span id="time-stat">-</span></div>
-                        </div>
-                    </div>
-                </div>
-            `
+      modal.appendChild(container);
+      document.body.appendChild(modal);
 
-            document.body.appendChild(this.loginModal)
+      const input = document.getElementById('username-input');
+      const btn = document.getElementById('login-btn');
 
-            const usernameInput = this.loginModal.querySelector('#username-input')
-            const loginBtn = this.loginModal.querySelector('#login-btn')
-            const statsContainer = this.loginModal.querySelector('#stats-container')
+      // Foco automático
+      setTimeout(() => input.focus(), 100);
 
-            // Focus en input
-            setTimeout(() => usernameInput.focus(), 100)
+      // Hover effect
+      btn.addEventListener('mouseenter', () => {
+        btn.style.transform = 'translateY(-2px)';
+        btn.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translateY(0)';
+        btn.style.boxShadow = 'none';
+      });
 
-            // Estilo hover del botón
-            loginBtn.addEventListener('mouseenter', () => {
-                loginBtn.style.transform = 'scale(1.05)'
-                loginBtn.style.boxShadow = '0 8px 25px rgba(0, 255, 247, 0.6)'
-            })
-            loginBtn.addEventListener('mouseleave', () => {
-                loginBtn.style.transform = 'scale(1)'
-                loginBtn.style.boxShadow = '0 5px 15px rgba(0, 255, 247, 0.4)'
-            })
+      // Input focus effect
+      input.addEventListener('focus', () => {
+        input.style.borderColor = '#667eea';
+      });
+      input.addEventListener('blur', () => {
+        input.style.borderColor = '#e0e0e0';
+      });
 
-            // Estilo focus del input
-            usernameInput.addEventListener('focus', () => {
-                usernameInput.style.borderColor = '#00fff7'
-                usernameInput.style.boxShadow = '0 0 15px rgba(0, 255, 247, 0.3)'
-            })
-            usernameInput.addEventListener('blur', () => {
-                usernameInput.style.borderColor = 'rgba(0, 255, 247, 0.3)'
-                usernameInput.style.boxShadow = 'none'
-            })
+      const handleLogin = () => {
+        const username = input.value.trim();
 
-            // Mostrar stats si hay usuario guardado
-            if (this.currentUser) {
-                usernameInput.value = this.currentUser.username
-                statsContainer.style.display = 'block'
-                this.loginModal.querySelector('#level-stat').textContent = this.currentUser.progress.currentLevel
-                this.loginModal.querySelector('#points-stat').textContent = this.currentUser.progress.totalPoints
-                this.loginModal.querySelector('#time-stat').textContent = this.formatTime(this.currentUser.progress.totalTimePlayed)
-            }
-
-            // Handle login
-            const handleLogin = () => {
-                const username = usernameInput.value.trim()
-                if (username.length < 2) {
-                    usernameInput.style.borderColor = '#ff4444'
-                    usernameInput.placeholder = 'Mínimo 2 caracteres'
-                    setTimeout(() => {
-                        usernameInput.style.borderColor = 'rgba(0, 255, 247, 0.3)'
-                        usernameInput.placeholder = 'Nombre de jugador'
-                    }, 2000)
-                    return
-                }
-
-                if (this.currentUser && this.currentUser.username === username) {
-                    // Usuario existente
-                    console.log('👋 Bienvenido de nuevo,', username)
-                } else {
-                    // Nuevo usuario
-                    this.currentUser = {
-                        username: username,
-                        createdAt: new Date().toISOString(),
-                        progress: {
-                            currentLevel: 1,
-                            totalPoints: 0,
-                            totalTimePlayed: 0,
-                            levelsCompleted: []
-                        }
-                    }
-                    this.saveProgress()
-                    console.log('🎉 Nuevo jugador creado:', username)
-                }
-
-                this.loginModal.remove()
-                resolve(this.currentUser)
-            }
-
-            loginBtn.addEventListener('click', handleLogin)
-            usernameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin()
-            })
-        })
-    }
-
-    /**
-     * Guardar progreso del jugador
-     */
-    saveProgress() {
-        if (!this.currentUser) return
-
-        this.currentUser.lastPlayed = new Date().toISOString()
-        localStorage.setItem(this.storageKey, JSON.stringify(this.currentUser))
-        console.log('💾 Progreso guardado para', this.currentUser.username)
-    }
-
-    /**
-     * Actualizar progreso (llamar cuando se completa un nivel)
-     */
-    updateProgress(level, points, timePlayed) {
-        if (!this.currentUser) return
-
-        this.currentUser.progress.currentLevel = Math.max(this.currentUser.progress.currentLevel, level)
-        this.currentUser.progress.totalPoints += points
-        this.currentUser.progress.totalTimePlayed += timePlayed
-
-        if (!this.currentUser.progress.levelsCompleted.includes(level)) {
-            this.currentUser.progress.levelsCompleted.push(level)
+        if (!username || username.length < 2) {
+          input.style.borderColor = '#ff4444';
+          input.placeholder = 'Nombre muy corto (mínimo 2 caracteres)';
+          input.value = '';
+          return;
         }
 
-        this.saveProgress()
+        // Crear usuario
+        this.currentUser = {
+          username,
+          createdAt: new Date().toISOString(),
+          progress: {
+            currentLevel: 1,
+            totalPoints: 0,
+            totalTimePlayed: 0,
+            levelsCompleted: []
+          }
+        };
+
+        // Guardar en localStorage
+        this.saveProgress();
+
+        logger.info('👤✅', `Usuario logueado: ${username}`);
+
+        // Crear botón de logout
+        this.createLogoutButton();
+
+        // Remover modal con animación
+        modal.style.transition = 'opacity 0.3s';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+          modal.remove();
+          resolve();
+        }, 300);
+      };
+
+      // Enter key
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+      });
+
+      // Click button
+      btn.addEventListener('click', handleLogin);
+    });
+  }
+
+  /**
+   * Crear botón de logout flotante
+   */
+  createLogoutButton() {
+    // Verificar si ya existe
+    if (this.logoutButton) return;
+
+    this.logoutButton = document.createElement('button');
+    this.logoutButton.innerHTML = `
+      <span style="margin-right: 8px;">👤</span>
+      <span id="username-display">${this.getUsername()}</span>
+      <span style="margin-left: 8px; font-size: 12px;">🚪</span>
+    `;
+
+    Object.assign(this.logoutButton.style, {
+      position: 'fixed',
+      top: '20px',
+      right: '20px',
+      padding: '12px 20px',
+      background: 'rgba(255, 255, 255, 0.95)',
+      color: '#333',
+      border: '2px solid #667eea',
+      borderRadius: '25px',
+      fontSize: '14px',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      zIndex: '9998',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      transition: 'all 0.3s',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px'
+    });
+
+    // Hover effect
+    this.logoutButton.addEventListener('mouseenter', () => {
+      this.logoutButton.style.transform = 'translateY(-2px)';
+      this.logoutButton.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
+      this.logoutButton.style.background = 'rgba(102, 126, 234, 0.1)';
+    });
+
+    this.logoutButton.addEventListener('mouseleave', () => {
+      this.logoutButton.style.transform = 'translateY(0)';
+      this.logoutButton.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      this.logoutButton.style.background = 'rgba(255, 255, 255, 0.95)';
+    });
+
+    // Click handler
+    this.logoutButton.addEventListener('click', () => {
+      this.logout();
+    });
+
+    document.body.appendChild(this.logoutButton);
+    logger.info('👤🔘', 'Botón de logout creado');
+  }
+
+  /**
+   * Cerrar sesión
+   */
+  logout() {
+    if (!this.currentUser) return;
+
+    const username = this.currentUser.username;
+
+    // Confirmar logout
+    const confirmed = confirm(`¿Seguro que quieres cerrar sesión, ${username}?`);
+
+    if (!confirmed) return;
+
+    logger.info('👤🚪', `Cerrando sesión de: ${username}`);
+
+    // Limpiar datos
+    this.currentUser = null;
+    localStorage.removeItem(this.storageKey);
+
+    // Remover botón de logout
+    if (this.logoutButton) {
+      this.logoutButton.remove();
+      this.logoutButton = null;
     }
 
-    /**
-     * Obtener progreso actual
-     */
-    getProgress() {
-        return this.currentUser?.progress || null
+    // Recargar página para forzar nuevo login
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
+  }
+
+  /**
+   * Guardar progreso en localStorage
+   */
+  saveProgress() {
+    if (!this.currentUser) return;
+
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.currentUser));
+      logger.debug('💾', 'Progreso guardado');
+    } catch (error) {
+      logger.error('Error al guardar progreso:', error);
+    }
+  }
+
+  /**
+   * Actualizar progreso del jugador
+   */
+  updateProgress(level, points, timePlayed) {
+    if (!this.currentUser) return;
+
+    this.currentUser.progress.currentLevel = Math.max(
+      this.currentUser.progress.currentLevel,
+      level
+    );
+    this.currentUser.progress.totalPoints += points;
+    this.currentUser.progress.totalTimePlayed += timePlayed;
+
+    if (!this.currentUser.progress.levelsCompleted.includes(level)) {
+      this.currentUser.progress.levelsCompleted.push(level);
     }
 
-    /**
-     * Cerrar sesión
-     */
-    logout() {
-        this.currentUser = null
-        localStorage.removeItem(this.storageKey)
-        console.log('👋 Sesión cerrada')
-    }
+    this.saveProgress();
 
-    /**
-     * Formatear tiempo en HH:MM:SS
-     */
-    formatTime(seconds) {
-        const hours = Math.floor(seconds / 3600)
-        const mins = Math.floor((seconds % 3600) / 60)
-        const secs = Math.floor(seconds % 60)
+    logger.info('📊', `Progreso actualizado: Nivel ${level}, +${points} puntos`);
+  }
 
-        if (hours > 0) {
-            return `${hours}h ${mins}m ${secs}s`
-        } else if (mins > 0) {
-            return `${mins}m ${secs}s`
-        } else {
-            return `${secs}s`
-        }
-    }
-
-    /**
-     * Verificar si hay sesión activa
-     */
-    isLoggedIn() {
-        return this.currentUser !== null
-    }
-
-    /**
-     * Obtener nombre del usuario actual
-     */
-    getUsername() {
-        return this.currentUser?.username || 'Invitado'
-    }
+  /**
+   * Obtener progreso actual
+   */
+  getProgress() {
+    return this.currentUser?.progress || {
+      currentLevel: 1,
+      totalPoints: 0,
+      totalTimePlayed: 0,
+      levelsCompleted: []
+    };
+  }
 }

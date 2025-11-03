@@ -75,11 +75,13 @@ export default class Enemy {
 
     // CRÍTICO: Forzar visibilidad de TODOS los children del modelo
     // Esto soluciona el problema de que solo aparezcan armas y luces
+    let meshCount = 0;
     this.model.traverse((child) => {
       // Forzar visibilidad (fix para modelos GLTF con meshes invisibles)
       child.visible = true;
 
       if (child.isMesh || child instanceof THREE.Mesh) {
+        meshCount++;
         child.castShadow = true;
         child.receiveShadow = true;
 
@@ -94,15 +96,37 @@ export default class Enemy {
       }
     });
 
-    // CRÍTICO: Remover armas y accesorios del modelo (solicitado por usuario)
-    this.removeWeapons();
+    logger.info('👹✅', `Modelo enemigo cargado: ${this.model.children.length} children, ${meshCount} meshes`);
+    logger.info('👹📍', `Posición enemigo: (${this.initialPosition.x}, ${this.initialPosition.y}, ${this.initialPosition.z})`);
 
-    logger.info('👹', `Modelo de enemigo cargado con ${this.model.children.length} children`);
+    // CRÍTICO: Remover armas y accesorios del modelo (solicitado por usuario)
+    // NOTA: Deshabilitado temporalmente para debug - puede estar eliminando partes importantes
+    // this.removeWeapons();
+
+    // Log de estructura del modelo para debug
+    this.logModelStructure();
+  }
+
+  /**
+   * Log de estructura del modelo para debugging
+   */
+  logModelStructure() {
+    if (!this.model) return;
+
+    const meshNames = [];
+    this.model.traverse((child) => {
+      if (child.isMesh) {
+        meshNames.push(child.name || 'unnamed');
+      }
+    });
+
+    logger.debug('👹🔍', `Meshes en modelo enemigo: ${meshNames.join(', ')}`);
   }
 
   /**
    * Remueve armas y accesorios armamentísticos del modelo del enemigo
    * El usuario solicitó explícitamente: "armas y eso no deben tener mis robots"
+   * NOTA: Actualmente deshabilitado para debug
    */
   removeWeapons() {
     if (!this.model) return;
@@ -258,14 +282,27 @@ export default class Enemy {
     // Manejo de colisiones
     this._onCollide = (event) => {
       try {
+        logger.debug('👹💥', 'Enemigo colisionó con algo');
+
         if (event.body === this.playerRef?.body) {
-          this.playerRef.die?.();
+          logger.info('👹💀', '¡ENEMIGO TOCÓ AL JUGADOR! Iniciando muerte del robot...');
+
+          // Llamar a la función die del jugador
+          if (this.playerRef.die) {
+            this.playerRef.die();
+          } else {
+            logger.error('playerRef.die no está disponible');
+          }
+
+          // Partículas de impacto
           new FinalPrizeParticles({
             scene: this.scene,
             targetPosition: this.body.position,
             sourcePosition: this.body.position,
             experience: this.experience
           });
+
+          // Destruir el enemigo después de la colisión
           this.destroy();
         }
       } catch (err) {
@@ -274,6 +311,8 @@ export default class Enemy {
     };
 
     this.body.addEventListener('collide', this._onCollide);
+
+    logger.info('👹⚛️', `Físicas de enemigo configuradas: radio=${CONFIG.sphereRadius}, masa=${CONFIG.mass}`);
   }
 
   update(deltaTime) {
