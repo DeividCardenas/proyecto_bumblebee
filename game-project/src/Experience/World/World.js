@@ -254,7 +254,14 @@ export default class World {
             `Respuesta no-JSON desde API (${apiUrl}): ${preview}`
           );
         }
-        data = await res.json();
+        const apiData = await res.json();
+
+        // Si la API devuelve un array vacío, usar archivo local
+        if (!apiData || (Array.isArray(apiData) && apiData.length === 0)) {
+          throw new Error("API devolvió datos vacíos");
+        }
+
+        data = apiData;
         logger.info('📦', `Datos del nivel ${level} cargados desde API`);
       } catch (error) {
         logger.warn(
@@ -267,7 +274,13 @@ export default class World {
 
         logger.debug("¿Tienen 'role' los premios?", this.loader.prizes);
 
-        const localUrl = publicPath("data/toy_car_blocks.json");
+        // Seleccionar el archivo correcto según el nivel
+        const levelFiles = {
+          1: "data/toy_car_blocks.json",
+          2: "data/toy_car_blocks2.json",
+          3: "data/toy_car_blocks3.json"
+        };
+        const localUrl = publicPath(levelFiles[level] || "data/toy_car_blocks.json");
         const localRes = await fetch(localUrl);
         if (!localRes.ok) {
           const preview = (await localRes.text()).slice(0, 120);

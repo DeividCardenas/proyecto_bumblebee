@@ -18,20 +18,40 @@ export default class KeyboardControls extends EventEmitter {
 
     setListeners() {
         window.addEventListener('keydown', (event) => {
+            // Flechas direccionales
             if (event.key === 'ArrowUp') this.keys.up = true
             if (event.key === 'ArrowDown') this.keys.down = true
             if (event.key === 'ArrowLeft') this.keys.left = true
             if (event.key === 'ArrowRight') this.keys.right = true
+
+            // WASD (agregando soporte)
+            if (event.key === 'w' || event.key === 'W') this.keys.up = true
+            if (event.key === 's' || event.key === 'S') this.keys.down = true
+            if (event.key === 'a' || event.key === 'A') this.keys.left = true
+            if (event.key === 'd' || event.key === 'D') this.keys.right = true
+
+            // Espacio para saltar
             if (event.code === 'Space') this.keys.space = true
+
             this.trigger('change', this.keys)
         })
 
         window.addEventListener('keyup', (event) => {
+            // Flechas direccionales
             if (event.key === 'ArrowUp') this.keys.up = false
             if (event.key === 'ArrowDown') this.keys.down = false
             if (event.key === 'ArrowLeft') this.keys.left = false
             if (event.key === 'ArrowRight') this.keys.right = false
+
+            // WASD (agregando soporte)
+            if (event.key === 'w' || event.key === 'W') this.keys.up = false
+            if (event.key === 's' || event.key === 'S') this.keys.down = false
+            if (event.key === 'a' || event.key === 'A') this.keys.left = false
+            if (event.key === 'd' || event.key === 'D') this.keys.right = false
+
+            // Espacio para saltar
             if (event.code === 'Space') this.keys.space = false
+
             this.trigger('change', this.keys)
         })
     }

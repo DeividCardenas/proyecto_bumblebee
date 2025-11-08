@@ -201,11 +201,10 @@ export default class CircularMenu {
     })
 
     this.aboutContainer.innerHTML = `
-          <h2 style="margin-bottom: 10px;">👨‍💻 Desarrollador</h2>
-          <p style="margin: 0;">Gustavo Sánchez Rodríguez</p>
+          <h2 style="margin-bottom: 10px;">👨‍💻 Desarrollado por</h2>
+          <p style="margin: 0;">Deivid Julian Cardenas Melo y Santiago Reyes Sanchez</p>
           <p style="margin: 0; font-size: 14px;">Universidad Cooperativa de Colombia</p>
           <p style="margin: 10px 0 0; font-size: 13px;">Proyecto interactivo educativo con Three.js</p>
-          <p style="margin: 10px 0 0; font-size: 13px;">guswillsan@gmail.com</p>
           <button style="
             margin-top: 12px;
             padding: 6px 14px;

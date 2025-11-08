@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const blockRoutes = require('./routes/blockRoutes')
+const authRoutes = require('./routes/authRoutes')
 
 
 const app = express()
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 // Rutas
 //app.use('/blocks', blockRoutes)
 app.use('/api/blocks', blockRoutes)
+app.use('/api/auth', authRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

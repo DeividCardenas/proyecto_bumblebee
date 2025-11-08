@@ -1,11 +1,12 @@
 import logger from '../utils/Logger.js';
+import AuthService from './AuthService.js';
 
 /**
  * LoginManager - Sistema de autenticación y progreso del jugador
  * Funcionalidades:
- * - Login con nombre de usuario
- * - Guardar progreso en localStorage
- * - Cerrar sesión (logout)
+ * - Login/Registro con backend JWT
+ * - Sincronización de progreso con servidor
+ * - Fallback a localStorage si el servidor no está disponible
  * - Tracking de nivel, puntos y tiempo jugado
  */
 export default class LoginManager {
@@ -13,30 +14,76 @@ export default class LoginManager {
     this.currentUser = null;
     this.storageKey = 'bumblebee_user_data';
     this.logoutButton = null;
+    this.useBackend = true; // Intentar usar backend por defecto
 
     // Verificar si hay sesión existente
     this.checkExistingSession();
   }
 
   /**
-   * Verificar si existe una sesión guardada en localStorage
+   * Verificar si existe una sesión guardada
    */
-  checkExistingSession() {
+  async checkExistingSession() {
     try {
+      // Intentar restaurar sesión del backend
+      if (AuthService.isAuthenticated()) {
+        const isValid = await AuthService.verifyToken();
+
+        if (isValid) {
+          const user = await AuthService.getProfile();
+          this.currentUser = this.mapBackendUser(user);
+          logger.info('👤', `Sesión restaurada desde backend: ${this.currentUser.username}`);
+          this.createLogoutButton();
+          return true;
+        }
+      }
+
+      // Fallback a localStorage (modo offline)
       const savedData = localStorage.getItem(this.storageKey);
       if (savedData) {
         this.currentUser = JSON.parse(savedData);
-        logger.info('👤', `Sesión restaurada: ${this.currentUser.username}`);
-
-        // Crear botón de logout automáticamente
+        this.useBackend = false;
+        logger.info('👤', `Sesión restaurada desde localStorage (offline): ${this.currentUser.username}`);
         this.createLogoutButton();
         return true;
       }
     } catch (error) {
       logger.error('Error al restaurar sesión:', error);
-      localStorage.removeItem(this.storageKey);
+      // Intentar fallback a localStorage
+      try {
+        const savedData = localStorage.getItem(this.storageKey);
+        if (savedData) {
+          this.currentUser = JSON.parse(savedData);
+          this.useBackend = false;
+          logger.warn('⚠️ Usando modo offline por error en backend');
+          this.createLogoutButton();
+          return true;
+        }
+      } catch (e) {
+        localStorage.removeItem(this.storageKey);
+      }
     }
     return false;
+  }
+
+  /**
+   * Mapear usuario del backend al formato local
+   */
+  mapBackendUser(backendUser) {
+    return {
+      id: backendUser.id,
+      username: backendUser.username,
+      email: backendUser.email,
+      createdAt: backendUser.createdAt,
+      progress: {
+        currentLevel: backendUser.gameStats.level,
+        totalPoints: backendUser.gameStats.highScore,
+        totalTimePlayed: backendUser.gameStats.totalPlayTime,
+        levelsCompleted: [],
+        totalGamesPlayed: backendUser.gameStats.totalGamesPlayed
+      },
+      isBackendUser: true
+    };
   }
 
   /**
@@ -54,11 +101,10 @@ export default class LoginManager {
   }
 
   /**
-   * Mostrar modal de login con diseño mejorado
+   * Mostrar modal de login/registro mejorado con backend
    */
   showLoginModal() {
     return new Promise((resolve) => {
-      // Crear modal con fondo animado
       const modal = document.createElement('div');
       modal.style.cssText = `
         position: fixed;
@@ -79,7 +125,6 @@ export default class LoginManager {
         animation: fadeIn 0.5s forwards;
       `;
 
-      // Agregar animaciones CSS
       const style = document.createElement('style');
       style.textContent = `
         @keyframes gradientShift {
@@ -100,13 +145,10 @@ export default class LoginManager {
             transform: translateY(0);
           }
         }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
-          50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.8), 0 0 60px rgba(139, 92, 246, 0.4); }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
         }
       `;
       document.head.appendChild(style);
@@ -117,8 +159,7 @@ export default class LoginManager {
         backdrop-filter: blur(20px);
         padding: 50px 40px;
         border-radius: 30px;
-        box-shadow: 0 25px 80px rgba(0,0,0,0.4),
-                    0 0 100px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 25px 80px rgba(0,0,0,0.4);
         max-width: 450px;
         width: 90%;
         text-align: center;
@@ -126,12 +167,10 @@ export default class LoginManager {
         border: 2px solid rgba(255,255,255,0.3);
       `;
 
-      // Logo animado con efecto de robot
       const logo = document.createElement('div');
       logo.style.cssText = `
         font-size: 80px;
         margin-bottom: 15px;
-        animation: pulse 2s ease-in-out infinite;
         filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
       `;
       logo.textContent = '🤖';
@@ -146,7 +185,6 @@ export default class LoginManager {
         font-size: 42px;
         font-weight: 900;
         letter-spacing: -1px;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
       `;
       title.textContent = 'BUMBLEBEE';
 
@@ -159,12 +197,105 @@ export default class LoginManager {
       `;
       subtitle.innerHTML = '🎮 ¡Prepárate para la aventura! 🚀';
 
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = 'username-input';
-      input.placeholder = '✨ Tu nombre de héroe';
-      input.maxLength = 20;
-      input.style.cssText = `
+      // Tabs para Login/Registro
+      const tabsContainer = document.createElement('div');
+      tabsContainer.style.cssText = `
+        display: flex;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #e0e0e0;
+      `;
+
+      const loginTab = this.createTab('Iniciar Sesión', true);
+      const registerTab = this.createTab('Registrarse', false);
+
+      tabsContainer.appendChild(loginTab);
+      tabsContainer.appendChild(registerTab);
+
+      // Formulario de Login
+      const loginForm = this.createLoginForm();
+
+      // Formulario de Registro
+      const registerForm = this.createRegisterForm();
+      registerForm.style.display = 'none';
+
+      // Switch entre tabs
+      loginTab.addEventListener('click', () => {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+      });
+
+      registerTab.addEventListener('click', () => {
+        registerTab.classList.add('active');
+        loginTab.classList.remove('active');
+        registerForm.style.display = 'block';
+        loginForm.style.display = 'none';
+      });
+
+      // Ensamblar modal
+      container.appendChild(logo);
+      container.appendChild(title);
+      container.appendChild(subtitle);
+      container.appendChild(tabsContainer);
+      container.appendChild(loginForm);
+      container.appendChild(registerForm);
+      modal.appendChild(container);
+      document.body.appendChild(modal);
+
+      // Handlers
+      this.setupLoginHandler(loginForm, modal, resolve);
+      this.setupRegisterHandler(registerForm, modal, resolve);
+
+      // Foco automático
+      setTimeout(() => loginForm.querySelector('input').focus(), 150);
+    });
+  }
+
+  createTab(text, active) {
+    const tab = document.createElement('div');
+    tab.style.cssText = `
+      flex: 1;
+      padding: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      color: ${active ? '#667eea' : '#999'};
+      border-bottom: 3px solid ${active ? '#667eea' : 'transparent'};
+    `;
+    tab.textContent = text;
+    if (active) tab.classList.add('active');
+
+    tab.addEventListener('mouseenter', () => {
+      if (!tab.classList.contains('active')) {
+        tab.style.color = '#667eea';
+      }
+    });
+    tab.addEventListener('mouseleave', () => {
+      if (!tab.classList.contains('active')) {
+        tab.style.color = '#999';
+      }
+    });
+
+    return tab;
+  }
+
+  createLoginForm() {
+    const form = document.createElement('div');
+    form.innerHTML = `
+      <input type="email" id="login-email" placeholder="📧 Email" style="
+        width: 100%;
+        padding: 18px 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 15px;
+        font-size: 17px;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        outline: none;
+      "/>
+      <input type="password" id="login-password" placeholder="🔒 Contraseña" style="
         width: 100%;
         padding: 18px 20px;
         border: 3px solid #e0e0e0;
@@ -174,13 +305,9 @@ export default class LoginManager {
         margin-bottom: 20px;
         transition: all 0.3s ease;
         font-weight: 500;
-        background: rgba(255,255,255,0.9);
         outline: none;
-      `;
-
-      const button = document.createElement('button');
-      button.id = 'login-btn';
-      button.style.cssText = `
+      "/>
+      <button id="login-btn" style="
         width: 100%;
         padding: 18px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -194,117 +321,191 @@ export default class LoginManager {
         text-transform: uppercase;
         letter-spacing: 1px;
         box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        position: relative;
-        overflow: hidden;
-      `;
-      button.innerHTML = '🚀 INICIAR AVENTURA';
+      ">🚀 INICIAR SESIÓN</button>
+    `;
+    return form;
+  }
 
-      // Ensamblar modal
-      container.appendChild(logo);
-      container.appendChild(title);
-      container.appendChild(subtitle);
-      container.appendChild(input);
-      container.appendChild(button);
-      modal.appendChild(container);
-      document.body.appendChild(modal);
+  createRegisterForm() {
+    const form = document.createElement('div');
+    form.innerHTML = `
+      <input type="text" id="register-username" placeholder="✨ Nombre de usuario" maxlength="30" style="
+        width: 100%;
+        padding: 18px 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 15px;
+        font-size: 17px;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        outline: none;
+      "/>
+      <input type="email" id="register-email" placeholder="📧 Email" style="
+        width: 100%;
+        padding: 18px 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 15px;
+        font-size: 17px;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        outline: none;
+      "/>
+      <input type="password" id="register-password" placeholder="🔒 Contraseña (min. 6 caracteres)" style="
+        width: 100%;
+        padding: 18px 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 15px;
+        font-size: 17px;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        outline: none;
+      "/>
+      <button id="register-btn" style="
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 19px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      ">✅ REGISTRARSE</button>
+    `;
+    return form;
+  }
 
-      // Foco automático
-      setTimeout(() => input.focus(), 150);
+  setupLoginHandler(form, modal, resolve) {
+    const emailInput = form.querySelector('#login-email');
+    const passwordInput = form.querySelector('#login-password');
+    const button = form.querySelector('#login-btn');
 
-      // Hover effects mejorados
-      button.addEventListener('mouseenter', () => {
-        button.style.transform = 'translateY(-3px) scale(1.02)';
-        button.style.boxShadow = '0 15px 35px rgba(102, 126, 234, 0.6)';
-      });
-      button.addEventListener('mouseleave', () => {
-        button.style.transform = 'translateY(0) scale(1)';
-        button.style.boxShadow = '0 10px 25px rgba(102, 126, 234, 0.4)';
-      });
+    const handleLogin = async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
 
-      // Input focus effect mejorado
-      input.addEventListener('focus', () => {
-        input.style.borderColor = '#667eea';
-        input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
-        input.style.transform = 'scale(1.02)';
-      });
-      input.addEventListener('blur', () => {
-        input.style.borderColor = '#e0e0e0';
-        input.style.boxShadow = 'none';
-        input.style.transform = 'scale(1)';
-      });
+      if (!email || !password) {
+        this.showError(emailInput, '❌ Por favor completa todos los campos');
+        return;
+      }
 
-      const handleLogin = () => {
-        const username = input.value.trim();
+      button.innerHTML = '⏳ Cargando...';
+      button.style.pointerEvents = 'none';
 
-        if (!username || username.length < 2) {
-          input.style.borderColor = '#ff4444';
-          input.style.animation = 'shake 0.5s';
-          input.placeholder = '❌ Mínimo 2 caracteres';
-          input.value = '';
-          setTimeout(() => {
-            input.style.borderColor = '#e0e0e0';
-            input.placeholder = '✨ Tu nombre de héroe';
-          }, 2000);
-          return;
-        }
+      try {
+        const data = await AuthService.login(email, password);
+        this.currentUser = this.mapBackendUser(data.user);
+        this.useBackend = true;
+        this.saveProgress();
 
-        // Animación de carga en botón
-        button.innerHTML = '⏳ Cargando...';
-        button.style.pointerEvents = 'none';
+        logger.info('👤✅', `Usuario logueado: ${this.currentUser.username}`);
+        this.createLogoutButton();
 
-        setTimeout(() => {
-          // Crear usuario
-          this.currentUser = {
-            username,
-            createdAt: new Date().toISOString(),
-            progress: {
-              currentLevel: 1,
-              totalPoints: 0,
-              totalTimePlayed: 0,
-              levelsCompleted: []
-            }
-          };
+        button.innerHTML = '✅ ¡Listo!';
+        button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
 
-          // Guardar en localStorage
-          this.saveProgress();
+        setTimeout(() => this.closeModal(modal, resolve), 800);
+      } catch (error) {
+        button.innerHTML = '🚀 INICIAR SESIÓN';
+        button.style.pointerEvents = 'auto';
+        this.showError(emailInput, error.message || 'Error al iniciar sesión');
+      }
+    };
 
-          logger.info('👤✅', `Usuario logueado: ${username}`);
-
-          // Crear botón de logout
-          this.createLogoutButton();
-
-          // Animación de éxito
-          button.innerHTML = '✅ ¡Listo!';
-          button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-
-          // Remover modal con animación
-          setTimeout(() => {
-            modal.style.transition = 'opacity 0.5s, transform 0.5s';
-            modal.style.opacity = '0';
-            modal.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-              modal.remove();
-              resolve();
-            }, 500);
-          }, 500);
-        }, 800);
-      };
-
-      // Enter key
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLogin();
-      });
-
-      // Click button
-      button.addEventListener('click', handleLogin);
+    button.addEventListener('click', handleLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleLogin();
     });
   }
 
+  setupRegisterHandler(form, modal, resolve) {
+    const usernameInput = form.querySelector('#register-username');
+    const emailInput = form.querySelector('#register-email');
+    const passwordInput = form.querySelector('#register-password');
+    const button = form.querySelector('#register-btn');
+
+    const handleRegister = async () => {
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !email || !password) {
+        this.showError(usernameInput, '❌ Por favor completa todos los campos');
+        return;
+      }
+
+      if (username.length < 3) {
+        this.showError(usernameInput, '❌ El nombre debe tener al menos 3 caracteres');
+        return;
+      }
+
+      if (password.length < 6) {
+        this.showError(passwordInput, '❌ La contraseña debe tener al menos 6 caracteres');
+        return;
+      }
+
+      button.innerHTML = '⏳ Creando cuenta...';
+      button.style.pointerEvents = 'none';
+
+      try {
+        const data = await AuthService.register(username, email, password);
+        this.currentUser = this.mapBackendUser(data.user);
+        this.useBackend = true;
+        this.saveProgress();
+
+        logger.info('👤✅', `Usuario registrado: ${this.currentUser.username}`);
+        this.createLogoutButton();
+
+        button.innerHTML = '✅ ¡Cuenta creada!';
+
+        setTimeout(() => this.closeModal(modal, resolve), 800);
+      } catch (error) {
+        button.innerHTML = '✅ REGISTRARSE';
+        button.style.pointerEvents = 'auto';
+        this.showError(usernameInput, error.message || 'Error al registrar usuario');
+      }
+    };
+
+    button.addEventListener('click', handleRegister);
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleRegister();
+    });
+  }
+
+  showError(input, message) {
+    input.style.borderColor = '#ff4444';
+    input.style.animation = 'shake 0.5s';
+    input.placeholder = message;
+    input.value = '';
+    setTimeout(() => {
+      input.style.borderColor = '#e0e0e0';
+      input.style.animation = '';
+    }, 2000);
+  }
+
+  closeModal(modal, resolve) {
+    modal.style.transition = 'opacity 0.5s, transform 0.5s';
+    modal.style.opacity = '0';
+    modal.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      modal.remove();
+      resolve();
+    }, 500);
+  }
+
   /**
-   * Crear botón de logout flotante con diseño mejorado
+   * Crear botón de logout flotante
    */
   createLogoutButton() {
-    // Verificar si ya existe
     if (this.logoutButton) return;
 
     this.logoutButton = document.createElement('button');
@@ -330,46 +531,35 @@ export default class LoginManager {
       cursor: 'pointer',
       zIndex: '9998',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      boxShadow: '0 8px 20px rgba(102, 126, 234, 0.25), 0 2px 4px rgba(0,0,0,0.1)',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      boxShadow: '0 8px 20px rgba(102, 126, 234, 0.25)',
+      transition: 'all 0.3s',
       display: 'flex',
       alignItems: 'center',
       gap: '6px',
       letterSpacing: '0.3px'
     });
 
-    // Hover effect mejorado
     this.logoutButton.addEventListener('mouseenter', () => {
       this.logoutButton.style.transform = 'translateY(-3px) scale(1.03)';
-      this.logoutButton.style.boxShadow = '0 12px 28px rgba(102, 126, 234, 0.35), 0 4px 8px rgba(0,0,0,0.15)';
       this.logoutButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
       this.logoutButton.style.color = 'white';
     });
 
     this.logoutButton.addEventListener('mouseleave', () => {
       this.logoutButton.style.transform = 'translateY(0) scale(1)';
-      this.logoutButton.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.25), 0 2px 4px rgba(0,0,0,0.1)';
       this.logoutButton.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(249,250,251,0.98) 100%)';
       this.logoutButton.style.color = '#1f2937';
     });
 
-    // Click handler
-    this.logoutButton.addEventListener('click', () => {
-      this.logout();
-    });
+    this.logoutButton.addEventListener('click', () => this.logout());
 
-    // Animación de entrada
     this.logoutButton.style.opacity = '0';
-    this.logoutButton.style.transform = 'translateY(-20px)';
     document.body.appendChild(this.logoutButton);
 
     setTimeout(() => {
-      this.logoutButton.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+      this.logoutButton.style.transition = 'all 0.5s';
       this.logoutButton.style.opacity = '1';
-      this.logoutButton.style.transform = 'translateY(0)';
     }, 100);
-
-    logger.info('👤🔘', 'Botón de logout creado con diseño mejorado');
   }
 
   /**
@@ -378,40 +568,35 @@ export default class LoginManager {
   logout() {
     if (!this.currentUser) return;
 
-    const username = this.currentUser.username;
-
-    // Confirmar logout
-    const confirmed = confirm(`¿Seguro que quieres cerrar sesión, ${username}?`);
-
+    const confirmed = confirm(`¿Seguro que quieres cerrar sesión, ${this.currentUser.username}?`);
     if (!confirmed) return;
 
-    logger.info('👤🚪', `Cerrando sesión de: ${username}`);
+    logger.info('👤🚪', `Cerrando sesión de: ${this.currentUser.username}`);
 
-    // Limpiar datos
+    if (this.useBackend) {
+      AuthService.logout();
+    }
+
     this.currentUser = null;
     localStorage.removeItem(this.storageKey);
 
-    // Remover botón de logout
     if (this.logoutButton) {
       this.logoutButton.remove();
       this.logoutButton = null;
     }
 
-    // Recargar página para forzar nuevo login
-    setTimeout(() => {
-      window.location.reload();
-    }, 300);
+    setTimeout(() => window.location.reload(), 300);
   }
 
   /**
-   * Guardar progreso en localStorage
+   * Guardar progreso (localStorage como backup)
    */
   saveProgress() {
     if (!this.currentUser) return;
 
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.currentUser));
-      logger.debug('💾', 'Progreso guardado');
+      logger.debug('💾', 'Progreso guardado localmente');
     } catch (error) {
       logger.error('Error al guardar progreso:', error);
     }
@@ -420,7 +605,7 @@ export default class LoginManager {
   /**
    * Actualizar progreso del jugador
    */
-  updateProgress(level, points, timePlayed) {
+  async updateProgress(level, points, timePlayed) {
     if (!this.currentUser) return;
 
     this.currentUser.progress.currentLevel = Math.max(
@@ -429,14 +614,27 @@ export default class LoginManager {
     );
     this.currentUser.progress.totalPoints += points;
     this.currentUser.progress.totalTimePlayed += timePlayed;
+    this.currentUser.progress.totalGamesPlayed = (this.currentUser.progress.totalGamesPlayed || 0) + 1;
 
-    if (!this.currentUser.progress.levelsCompleted.includes(level)) {
-      this.currentUser.progress.levelsCompleted.push(level);
-    }
-
+    // Guardar localmente
     this.saveProgress();
 
-    logger.info('📊', `Progreso actualizado: Nivel ${level}, +${points} puntos`);
+    // Sincronizar con backend si está disponible
+    if (this.useBackend && this.currentUser.isBackendUser) {
+      try {
+        await AuthService.updateGameStats({
+          highScore: this.currentUser.progress.totalPoints,
+          level: this.currentUser.progress.currentLevel,
+          totalGamesPlayed: this.currentUser.progress.totalGamesPlayed,
+          totalPlayTime: this.currentUser.progress.totalTimePlayed
+        });
+        logger.info('📊', `Progreso sincronizado con servidor: Nivel ${level}, +${points} puntos`);
+      } catch (error) {
+        logger.error('Error al sincronizar con backend:', error);
+      }
+    } else {
+      logger.info('📊', `Progreso guardado localmente: Nivel ${level}, +${points} puntos`);
+    }
   }
 
   /**
@@ -447,7 +645,8 @@ export default class LoginManager {
       currentLevel: 1,
       totalPoints: 0,
       totalTimePlayed: 0,
-      levelsCompleted: []
+      levelsCompleted: [],
+      totalGamesPlayed: 0
     };
   }
 }

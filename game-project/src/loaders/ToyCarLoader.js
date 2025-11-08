@@ -118,10 +118,17 @@ export default class ToyCarLoader {
         const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Conexión fallida");
         blocks = await res.json();
+
+        // Si la API devuelve un array vacío, usar archivo local
+        if (!blocks || blocks.length === 0) {
+          throw new Error("API devolvió datos vacíos");
+        }
+
         console.log("Datos cargados desde la API:", blocks.length);
-      } catch {
+      } catch (error) {
         console.warn(
-          "No se pudo conectar con la API. Cargando desde archivo local..."
+          "No se pudo cargar desde la API (o está vacía). Cargando desde archivo local...",
+          error.message
         );
         const localRes = await fetch("/data/toy_car_blocks.json");
         const allBlocks = await localRes.json();

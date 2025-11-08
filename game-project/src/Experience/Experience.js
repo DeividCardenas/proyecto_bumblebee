@@ -53,6 +53,10 @@ export default class Experience {
 
     logger.info('🎮', 'Experience inicializada')
 
+    // Modal y Sistema de Login (DEBE IR ANTES de los recursos)
+    this.modal = new ModalManager({ container: document.body })
+    this.loginManager = new LoginManager()
+
     // Recursos
     this.resources = new Resources(sources)
 
@@ -82,7 +86,7 @@ export default class Experience {
       })
     })
 
-    
+
     // Cámara y renderer
     this.camera = new Camera(this)
     this.renderer = new Renderer(this)
@@ -92,11 +96,6 @@ export default class Experience {
       this.socketManager = new SocketManager(this)
       logger.info('🔌', 'SocketManager inicializado')
     }
-
-
-    // Modal y Sistema de Login
-    this.modal = new ModalManager({ container: document.body })
-    this.loginManager = new LoginManager()
 
     // Menú
     this.menu = new CircularMenu({

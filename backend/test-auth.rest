@@ -1,0 +1,65 @@
+### Archivo de pruebas para la API de autenticación
+### Puedes usar esto con la extensión REST Client de VS Code
+### o copiar los comandos cURL que están comentados
+
+### 1. Registrar un nuevo usuario
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "jugador1",
+  "email": "jugador1@example.com",
+  "password": "password123"
+}
+
+### cURL:
+# curl -X POST http://localhost:3001/api/auth/register -H "Content-Type: application/json" -d "{\"username\":\"jugador1\",\"email\":\"jugador1@example.com\",\"password\":\"password123\"}"
+
+###
+
+### 2. Login
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "jugador1@example.com",
+  "password": "password123"
+}
+
+### cURL:
+# curl -X POST http://localhost:3001/api/auth/login -H "Content-Type: application/json" -d "{\"email\":\"jugador1@example.com\",\"password\":\"password123\"}"
+
+###
+
+### 3. Obtener perfil (reemplaza YOUR_TOKEN con el token que obtuviste del login)
+GET http://localhost:3001/api/auth/profile
+Authorization: Bearer YOUR_TOKEN
+
+### cURL:
+# curl -X GET http://localhost:3001/api/auth/profile -H "Authorization: Bearer YOUR_TOKEN"
+
+###
+
+### 4. Actualizar estadísticas del juego (reemplaza YOUR_TOKEN)
+PUT http://localhost:3001/api/auth/game-stats
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "highScore": 2000,
+  "level": 5,
+  "totalGamesPlayed": 10,
+  "totalPlayTime": 3600
+}
+
+### cURL:
+# curl -X PUT http://localhost:3001/api/auth/game-stats -H "Content-Type: application/json" -H "Authorization: Bearer YOUR_TOKEN" -d "{\"highScore\":2000,\"level\":5,\"totalGamesPlayed\":10,\"totalPlayTime\":3600}"
+
+###
+
+### 5. Verificar token (reemplaza YOUR_TOKEN)
+GET http://localhost:3001/api/auth/verify
+Authorization: Bearer YOUR_TOKEN
+
+### cURL:
+# curl -X GET http://localhost:3001/api/auth/verify -H "Authorization: Bearer YOUR_TOKEN"
