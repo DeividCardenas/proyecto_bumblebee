@@ -76,15 +76,15 @@ export const GAME_CONFIG = {
         modelScale: 0.7,
 
         // Física
-        mass: 2,
+        mass: 5,                        // Aumentado para mejor estabilidad y menos flotación
         sphereRadius: 0.4,
-        linearDamping: 0.05,
+        linearDamping: 0.15,           // Reducido para menos resistencia y más velocidad
         angularDamping: 0.9,
 
         // Movimiento
-        moveForce: 260,
-        turnSpeed: 2.0,                 // Velocidad de giro (reducida de 3.1 para mejor control)
-        maxSpeed: 18,
+        moveForce: 700,                // Aumentado significativamente (75% más que el original)
+        turnSpeed: 3.5,                // Aumentado para mejor manejo y giros rápidos
+        maxSpeed: 40,                  // Aumentado significativamente para alta velocidad
 
         // Salto
         jumpForce: 3,
@@ -116,9 +116,9 @@ export const GAME_CONFIG = {
         modelScale: 0.7,
 
         // Física
-        mass: 5,
-        sphereRadius: 1.2,  // Aumentado para mejor detección de colisiones (50% más grande)
-        linearDamping: 0.01,
+        mass: 8,                        // Aumentado para evitar flotación
+        sphereRadius: 1.2,              // Aumentado para mejor detección de colisiones (50% más grande)
+        linearDamping: 0.5,             // Aumentado significativamente para evitar flotación
 
         // Velocidades (reducidas para mejor balance de gameplay)
         baseSpeed: 1.0,           // Velocidad base (patrullaje) - reducida 33%

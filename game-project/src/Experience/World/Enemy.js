@@ -131,8 +131,8 @@ export default class Enemy {
             experience: this.experience
           });
 
-          // Destruir el enemigo
-          this.die();
+          // NO destruir el enemigo - dejarlo en la escena
+          // El enemigo debe seguir visible después de atrapar al jugador
         }
       } catch (err) {
         logger.error('Error manejando colisión de enemigo:', err);

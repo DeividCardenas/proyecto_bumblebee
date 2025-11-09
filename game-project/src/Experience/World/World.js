@@ -211,6 +211,47 @@ export default class World {
     // Actualizar rotación de premios (esto se queda)
     this.loader?.prizes?.forEach((p) => p.update(delta));
 
+    // Animar el portal si está activo
+    if (this.portalPrize && this.finalPrizeActivated) {
+      // Rotar el portal lentamente
+      if (this.portalPrize.pivot) {
+        this.portalPrize.pivot.rotation.y += delta * 0.3;
+      }
+    }
+
+    // Animar partículas del portal
+    if (this.portalParticles && this.portalParticlesOriginalPositions) {
+      this.portalParticlesTime += delta;
+      const positions = this.portalParticles.geometry.attributes.position.array;
+
+      for (let i = 0; i < positions.length / 3; i++) {
+        const i3 = i * 3;
+        const originalX = this.portalParticlesOriginalPositions[i3];
+        const originalY = this.portalParticlesOriginalPositions[i3 + 1];
+        const originalZ = this.portalParticlesOriginalPositions[i3 + 2];
+
+        // Movimiento en espiral ascendente
+        const angle = this.portalParticlesTime + i * 0.1;
+        const radius = 0.2;
+
+        positions[i3] = originalX + Math.cos(angle) * radius;
+        positions[i3 + 1] = originalY + Math.sin(this.portalParticlesTime * 2 + i * 0.5) * 0.2;
+        positions[i3 + 2] = originalZ + Math.sin(angle) * radius;
+      }
+
+      this.portalParticles.geometry.attributes.position.needsUpdate = true;
+
+      // Rotar el sistema de partículas
+      this.portalParticles.rotation.y += delta * 0.5;
+    }
+
+    // Animar luz del portal (efecto de pulso)
+    if (this.portalLight) {
+      this.portalLightPulse += delta * 3;
+      const pulse = Math.sin(this.portalLightPulse) * 0.5 + 1.5;
+      this.portalLight.intensity = pulse;
+    }
+
     // ===================================
     // OPTIMIZACIÓN FÍSICA POR DISTANCIA (CRÍTICO)
     // Usa cache en lugar de scene.traverse() - 50-70% más rápido
@@ -435,9 +476,7 @@ showFinalPrize() {
       }
 
       if (child.isMesh) {
-        // Congelar transformaciones para optimizar
-        child.matrixAutoUpdate = false;
-        child.updateMatrix();
+        // NO congelar para permitir rotación del portal
         child.frustumCulled = true;
 
         // Calcular bounding box/sphere para optimización
@@ -476,10 +515,8 @@ showFinalPrize() {
     // Limpiar bones del array de children (importante)
     portalModel.children = portalModel.children.filter(child => !child.isBone);
 
-    // Escalar y congelar el portal
+    // Escalar el portal (NO congelar para permitir animación)
     portalModel.scale.set(1.5, 1.5, 1.5);
-    portalModel.matrixAutoUpdate = false;
-    portalModel.updateMatrix();
 
     logger.info('✅', 'Portal ultra-simplificado: SkinnedMesh → Mesh, bones eliminados, emissive desactivado');
 
@@ -497,10 +534,8 @@ showFinalPrize() {
     finalPortalPrize.pivot.visible = true;
     finalPortalPrize.pivot.userData.ignoreCamera = true;
 
-    // Congelar el pivot también
-    finalPortalPrize.pivot.matrixAutoUpdate = false;
+    // NO congelar el pivot para permitir animación
     finalPortalPrize.pivot.position.copy(portalPosition);
-    finalPortalPrize.pivot.updateMatrix();
 
     // 6. Añadir al array de premios
     if (!this.loader || !this.loader.prizes) {
@@ -514,13 +549,33 @@ showFinalPrize() {
     this.finalPrizeActivated = true;
 
     // =================================================================
-    // 7. SIN EFECTOS VISUALES NI SONIDOS (ULTRA-SIMPLIFICADO)
+    // 7. EFECTOS VISUALES Y SONIDO DEL PORTAL
     // =================================================================
-    // NO activar FXManager (faro de luz) - DESACTIVADO PARA SIMPLIFICAR
-    // NO reproducir sonido del portal - DESACTIVADO PARA SIMPLIFICAR
 
-    logger.info('✅', `Portal SIMPLE creado en (${portalPosition.x}, ${portalPosition.y}, ${portalPosition.z})`);
-    logger.info('ℹ️', 'Portal sin animaciones, sin sonidos, sin efectos - MODO ULTRA-BÁSICO');
+    // Reproducir sonido del portal
+    if (this.portalSound && typeof this.portalSound.play === "function") {
+      this.portalSound.play();
+      logger.info('🔊', 'Sonido del portal reproducido');
+    }
+
+    // Guardar referencia al portal para animarlo
+    this.portalPrize = finalPortalPrize;
+
+    // Crear partículas alrededor del portal
+    this.createPortalParticles(portalPosition);
+
+    // Crear luz pulsante en el portal
+    const portalLight = new THREE.PointLight(0x00ffff, 2, 20);
+    portalLight.position.copy(portalPosition);
+    this.scene.add(portalLight);
+
+    // Guardar referencia a la luz
+    this.portalLight = portalLight;
+    this.portalLightIntensity = 2;
+    this.portalLightPulse = 0;
+
+    logger.info('✅', `Portal creado en (${portalPosition.x}, ${portalPosition.y}, ${portalPosition.z}) con efectos visuales`);
+    logger.info('🌟', 'Portal con partículas, luz pulsante y sonido activados');
     logger.info('ℹ️', `Radio de colección: ${GAME_CONFIG.gameplay.portalCollectionDistance} unidades`);
   }
 
@@ -614,6 +669,22 @@ showFinalPrize() {
 
     this.finalPrizeActivated = false;
 
+    // Limpiar efectos del portal
+    if (this.portalParticles) {
+      this.scene.remove(this.portalParticles);
+      this.portalParticles.geometry.dispose();
+      this.portalParticles.material.dispose();
+      this.portalParticles = null;
+      this.portalParticlesOriginalPositions = null;
+    }
+
+    if (this.portalLight) {
+      this.scene.remove(this.portalLight);
+      this.portalLight = null;
+    }
+
+    this.portalPrize = null;
+
     // NUEVO: Resetear la lógica del juego
     if (this.gameLogic) {
       this.gameLogic.reset();
@@ -633,6 +704,57 @@ showFinalPrize() {
 
     this.robot.group.position.set(spawn.x, spawn.y, spawn.z);
     this.robot.group.rotation.set(0, 0, 0);
+  }
+
+  /**
+   * Crear sistema de partículas alrededor del portal
+   */
+  createPortalParticles(portalPosition) {
+    const particleCount = 100;
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    // Inicializar posiciones y colores de partículas
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+
+      // Posiciones aleatorias en forma de espiral alrededor del portal
+      const angle = (i / particleCount) * Math.PI * 4;
+      const radius = 2 + Math.random() * 1;
+      const height = Math.random() * 4 - 2;
+
+      positions[i3] = portalPosition.x + Math.cos(angle) * radius;
+      positions[i3 + 1] = portalPosition.y + height;
+      positions[i3 + 2] = portalPosition.z + Math.sin(angle) * radius;
+
+      // Colores cyan/azul brillante
+      colors[i3] = 0.0 + Math.random() * 0.3;     // R
+      colors[i3 + 1] = 0.8 + Math.random() * 0.2; // G (cyan)
+      colors[i3 + 2] = 1.0;                       // B
+    }
+
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 0.1,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true
+    });
+
+    this.portalParticles = new THREE.Points(particleGeometry, particleMaterial);
+    this.scene.add(this.portalParticles);
+
+    // Guardar posición inicial y datos para animación
+    this.portalParticlesTime = 0;
+    this.portalParticlesOriginalPositions = positions.slice();
+    this.portalParticlesPosition = portalPosition;
+
+    logger.info('✨', 'Sistema de partículas del portal creado');
   }
 
 }

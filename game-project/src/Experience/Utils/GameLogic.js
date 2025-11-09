@@ -83,13 +83,17 @@ export default class GameLogic {
         this.timeouts.push(timeoutId);
       }
 
-      // Mostrar modal de derrota
+      // Mostrar modal de derrota con opción de respawn
       this.experience.modal.show({
         icon: "💀",
-        message: "¡El enemigo te atrapó!\n¿Quieres intentarlo otra vez?",
+        message: "¡El enemigo te atrapó!\n¿Quieres continuar?",
         buttons: [
           {
-            text: "🔁 Reintentar",
+            text: "⚡ Respawn",
+            onClick: () => this.handleRespawn(),
+          },
+          {
+            text: "🔁 Reiniciar nivel 1",
             onClick: () => this.experience.resetGameToFirstLevel(),
           },
           {
@@ -155,6 +159,51 @@ export default class GameLogic {
         break;
       }
     }
+  }
+
+  /**
+   * Maneja el respawn del jugador en el nivel actual
+   */
+  handleRespawn() {
+    logger.info('⚡', 'Respawneando jugador en el nivel actual...');
+
+    // Resetear flag de derrota
+    this.defeatTriggered = false;
+
+    // Resetear escala de enemigos
+    if (this.experience.world?.enemies) {
+      this.experience.world.enemies.forEach(enemy => {
+        if (enemy.model) {
+          enemy.model.scale.set(0.7, 0.7, 0.7);
+        }
+        if (enemy.group) {
+          enemy.group.scale.set(1, 1, 1);
+        }
+      });
+    }
+
+    // Reposicionar al jugador en el spawn point
+    const spawnPoint = GAME_CONFIG.gameplay.defaultSpawnPoint;
+    if (this.experience.world?.resetRobotPosition) {
+      this.experience.world.resetRobotPosition(spawnPoint);
+    }
+
+    // Revivir al robot si tiene el método
+    if (this.player?.revive) {
+      this.player.revive();
+    } else if (this.player) {
+      // Alternativa: resetear manualmente el estado del jugador
+      this.player.isDead = false;
+      if (this.player.body) {
+        this.player.body.velocity.set(0, 0, 0);
+        this.player.body.angularVelocity.set(0, 0, 0);
+      }
+    }
+
+    // Resetear la lógica del juego
+    this.reset();
+
+    logger.info('✅', 'Jugador respawneado exitosamente');
   }
 
   /**
